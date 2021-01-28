@@ -1,0 +1,64 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.card-container {
+  width: 200px;
+  height: 300px;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  transition: transform 1s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.card-container:hover .card {
+  transform: rotateY(180deg);
+}
+
+.card figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 5px;
+}
+
+.card .front {
+  background: rgb(72, 72, 212);
+  color: white;
+  text-align: center;
+}
+.card .back {
+  background: rgb(0, 225, 255);
+  color: white;
+  transform: rotateY(180deg);
+}
+.back button {
+  background: rgb(72, 72, 212);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.card h1 {
+  padding-bottom: 20px;
+}

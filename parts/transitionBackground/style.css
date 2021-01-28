@@ -1,0 +1,55 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f9b9b7;
+  font-family: sans-serif;
+  transition: all 0.5s ease;
+}
+header {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.intro-text h1 {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.intro-text p {
+  font-size: 22px;
+}
+
+section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+section img {
+  width: 90%;
+  height: 70%;
+  object-fit: cover;
+}
+
+.page2 {
+  text-align: center;
+  width: 70%;
+}
+
+.page2 h1 {
+  margin-bottom: 20px;
+  font-size: 30px;
+}
+
+.bg-active {
+  background-color: white;
+}
