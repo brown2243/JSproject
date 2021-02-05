@@ -1,0 +1,187 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+  background: rgba(27, 143, 197, 0.8);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.box-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.box-container .box {
+  border: 2px solid black;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.box-container .box:hover {
+  -webkit-transform: scale(2);
+          transform: scale(2);
+}
+
+.box1 {
+  -webkit-animation: sample 2s linear 2 forwards;
+          animation: sample 2s linear 2 forwards;
+}
+
+.box1:hover {
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+
+@-webkit-keyframes sample {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
+  }
+  50% {
+    -webkit-transform: translate(100px, 0px);
+            transform: translate(100px, 0px);
+  }
+  75% {
+    -webkit-transform: translate(100px, 300px);
+            transform: translate(100px, 300px);
+  }
+  100% {
+    -webkit-transform: translate(800px, 300px);
+            transform: translate(800px, 300px);
+  }
+}
+
+@keyframes sample {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
+  }
+  50% {
+    -webkit-transform: translate(100px, 0px);
+            transform: translate(100px, 0px);
+  }
+  75% {
+    -webkit-transform: translate(100px, 300px);
+            transform: translate(100px, 300px);
+  }
+  100% {
+    -webkit-transform: translate(800px, 300px);
+            transform: translate(800px, 300px);
+  }
+}
+
+.spaceship {
+  margin-left: 100px;
+  width: 150px;
+  height: 150px;
+  background: url(./img/sprite_spaceship.png) no-repeat 0 0/cover;
+  -webkit-animation: spaceshipMove 2s steps(17) infinite;
+          animation: spaceshipMove 2s steps(17) infinite;
+}
+
+@-webkit-keyframes spaceshipMove {
+  to {
+    background-position: -2550px 0;
+  }
+}
+
+@keyframes spaceshipMove {
+  to {
+    background-position: -2550px 0;
+  }
+}
+
+.world {
+  width: 60vw;
+  height: 60vh;
+  background: dodgerblue;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.world .card {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin: 1em;
+  width: 100px;
+  height: 150px;
+  background: tomato;
+  border-radius: 0.5em;
+  font-size: 1.5rem;
+  -webkit-transition: 1s;
+  transition: 1s;
+  -webkit-transform: rotateY(0deg);
+          transform: rotateY(0deg);
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+}
+
+.world .card:hover {
+  -webkit-transform: rotateY(180deg);
+          transform: rotateY(180deg);
+}
+
+.world .card .front,
+.world .card .back {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5em;
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.world .card .front {
+  background: white;
+  z-index: 1;
+}
+
+.world .card .back {
+  background: blue;
+  -webkit-transform: rotateY(180deg);
+          transform: rotateY(180deg);
+}
+/*# sourceMappingURL=style.css.map */
