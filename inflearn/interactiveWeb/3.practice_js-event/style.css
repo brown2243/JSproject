@@ -1,0 +1,127 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 75vh;
+  background: #fff000;
+}
+
+.ilbuni {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-animation: moving infinite alternate;
+          animation: moving infinite alternate;
+}
+
+.ilbuni:nth-of-type(1) {
+  left: 5%;
+  bottom: 5%;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+}
+
+.ilbuni:nth-of-type(2) {
+  -webkit-animation-duration: 3s;
+          animation-duration: 3s;
+  left: 30%;
+  bottom: 15%;
+}
+
+.ilbuni:nth-of-type(3) {
+  -webkit-animation-duration: 5s;
+          animation-duration: 5s;
+  left: 70%;
+  bottom: 70%;
+}
+
+@-webkit-keyframes moving {
+  from {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  to {
+    -webkit-transform: translateX(90vw);
+            transform: translateX(90vw);
+  }
+}
+
+@keyframes moving {
+  from {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  to {
+    -webkit-transform: translateX(90vw);
+            transform: translateX(90vw);
+  }
+}
+
+.special {
+  border: 10px dashed red;
+}
+
+.menu {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100vw;
+  height: 50vh;
+  border-radius: 5rem;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: gray;
+}
+
+.menu button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 10px;
+  outline: none;
+  border-radius: 1rem;
+  border: solid white 5px;
+  background-color: yellow;
+  -webkit-box-shadow: white 0 1px 0;
+          box-shadow: white 0 1px 0;
+}
+
+.menu button span {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.menu button img {
+  width: 100px;
+  height: 100px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+/*# sourceMappingURL=style.css.map */

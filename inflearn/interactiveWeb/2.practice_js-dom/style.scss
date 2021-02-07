@@ -1,0 +1,29 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+.characters {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #fff000;
+}
+.ilbuni {
+  width: 100px;
+  cursor: pointer;
+}
+.characters .ilbuni {
+  display: inline-block;
+}
+.special {
+  border: 10px dashed red;
+}
