@@ -243,6 +243,7 @@ body[data-char="ragirl"] {
 .character.running .character-arm {
   animation: ani-running-arm 0.2s alternate infinite linear;
 }
+
 body[data-char="ragirl"] .character {
   width: 12vw;
   height: calc(12vw * 1.4135);

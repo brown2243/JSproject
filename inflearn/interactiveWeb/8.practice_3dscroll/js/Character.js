@@ -50,14 +50,15 @@ Character.prototype = {
 
         window.addEventListener('scroll', function () {
             clearTimeout(self.scrollState);
-
             if (!self.scrollState) {
                 self.mainElem.classList.add('running');
+                console.log('running 붙음')
             }
-
+            
             self.scrollState = setTimeout(function () {
                 self.scrollState = false;
                 self.mainElem.classList.remove('running');
+                console.log('running 끝')
             }, 500);
 
             // 이전 스크롤 위치와 현재 스크롤 위치를 비교
