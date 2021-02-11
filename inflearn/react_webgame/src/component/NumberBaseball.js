@@ -57,6 +57,7 @@ function NumberBaseball() {
 
   return (
     <>
+      <h1>숫자야구게임</h1>
       <h1>{result}</h1>
       <form onSubmit={onSubmit}>
         <input type="text" maxLength={4} value={value} onChange={onChange} />

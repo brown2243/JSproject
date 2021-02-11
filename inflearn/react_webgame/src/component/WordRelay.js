@@ -21,7 +21,8 @@ function WordRelay() {
   };
   return (
     <div>
-      <h1>{word}</h1>
+      <h1>끝말잇기</h1>
+      <h2>{word}</h2>
       <form onSubmit={onSubmit}>
         <input type="text" ref={inputRef} value={value} onChange={onChange} />
         <button>입력</button>

@@ -35,6 +35,7 @@ const Gugudan2 = () => {
 
   return (
     <>
+      <h1>구구단</h1>
       <div>Hello, hooks</div>
       <div>
         {first} * {second} = ?
