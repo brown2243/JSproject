@@ -6,3 +6,17 @@
   justify-content: center;
   text-align: center;
 }
+#screen {
+  display: inline-block;
+  height: 20vh;
+  width: 40vw;
+}
+#screen.waiting {
+  background-color: aqua;
+}
+#screen.ready {
+  background-color: rgb(197, 63, 175);
+}
+#screen.now {
+  background-color: rgb(35, 117, 240);
+}

@@ -39,7 +39,7 @@ function NumberBaseball() {
       let strike = 0;
       let ball = 0;
       if (tries.length >= 9) {
-        setResult(`10번 넘게 틀려서 실패!\n 답은 ${answer.join(",")} 입니다.`);
+        setResult(`10번 넘게 틀려서 실패! \n 답은 ${answer.join(",")} 입니다.`);
         init();
       } else {
         for (let i = 0; i < 4; i++) {
