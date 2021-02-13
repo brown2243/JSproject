@@ -3,14 +3,16 @@ import Gugudan from "./component/Gugudan";
 import WordRelay from "./component/WordRelay";
 import NumberBaseball from "./component/NumberBaseball";
 import ResponseCheck from "./component/ResponseCheck";
+import RSPHook from "./component/RSPHook";
 
 const app = () => {
   return (
     <div className="App">
-      <Gugudan />
-      <WordRelay />
-      <NumberBaseball />
+      <RSPHook />
       <ResponseCheck />
+      <NumberBaseball />
+      <WordRelay />
+      <Gugudan />
     </div>
   );
 };
