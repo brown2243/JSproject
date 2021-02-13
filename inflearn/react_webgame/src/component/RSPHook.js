@@ -27,11 +27,9 @@ const RSPHook = () => {
   // 매번clear를 하고있기 때문에 그냥settimeout하는 것과 동일
   useEffect(() => {
     // componentDidMount, componentDidUpdate 대체 (1대1 대응 아님)
-    console.log("re-rendering");
     interval.current = setInterval(changeHand, 1000);
     return () => {
       // componentWillUnmount 대체
-      console.log("close");
       clearInterval(interval.current);
     };
   }, [imgCoord]);
