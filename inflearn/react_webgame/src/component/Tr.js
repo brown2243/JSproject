@@ -13,9 +13,7 @@ const Tr = memo(({ rowData, rowIndex, dispatch }) => {
             cellIndex={i}
             cellData={rowData[i]}
             dispatch={dispatch}
-          >
-            {""}
-          </Td>
+          ></Td>
         ))}
     </tr>
   );
