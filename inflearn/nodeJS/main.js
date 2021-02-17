@@ -1,10 +1,11 @@
 const http = require("http");
 const fs = require("fs");
 const url = require("url");
+const { CLIENT_RENEG_WINDOW } = require("tls");
 
 const app = http.createServer((request, response) => {
   let _url = request.url;
-  let queryData = url.parse(_url, true).query;
+  let queryData = url.urls(_url, true).query;
 
   console.log(_url, queryData);
   if (_url == "/") {
@@ -20,3 +21,19 @@ const app = http.createServer((request, response) => {
 });
 
 app.listen(5000);
+
+function oneMore() {
+  console.log("one more");
+}
+
+function run() {
+  console.log("run-run");
+  setTimeout(() => {
+    console.log("wow");
+  }, 0);
+  new Promise((res) => {
+    res("hi");
+  }).then(console.log);
+  oneMore();
+}
+setTimeout(run, 2000);
