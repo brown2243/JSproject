@@ -1,10 +1,31 @@
 const express = require("express");
+const morgan = require("morgan");
 const path = require("path");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const multer = require("multer");
 
 const app = express();
 
 // 설정
 app.set("port", process.env.PORT || 3000);
+
+// 요청과 응답을 기록하는 morgan 라우터
+app.use(morgan("dev"));
+// 실무에서는 combined를 사용한다함. 좀 더 자세하게 나옴
+// app.use(morgan("combined"));
+
+// 쿠키파서
+app.use(cookieParser());
+// 아래처럼 암호화하면 cookies 대신 signedCookies사용해야함
+app.use(cookieParser("password"));
+
+// 예전에 바디파서의 기능들이 익스프레스로 들어옴
+// 이런 미들웨어들은 순서가 중요함
+app.use("요청경로", express.static("실제경로"));
+app.use("/", express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 위에서 아래로 실행되기 때문에 범위가 넓은 미들웨어는 밑에다 배치해야함
 // 공통 미들웨어
@@ -18,11 +39,19 @@ app.get(`/category/:name`, (req, res) => {
   res.send(`hello ${req.params.name}`);
 });
 
-app.get("/", (req, res) => {
-  // res.sendFile(path.join(__dirname, "index.html"));
-  res.setHeader("Content-Type", "text/plain");
-  res.send("안녕 하세요");
-  res.json({ hello: "silversla" });
+app.get("/", (req, res, next) => {
+  req.cookies; // 알아서 파싱해줌 ex)_ {mycookie: 'test}
+  // // req.signedCookies;
+  res.cookie("name", encodeURIComponent(name), {
+    expires: new Date(),
+    httpOnly: true,
+    path: "/",
+  });
+  // res.clearCookie("name", encodeURIComponent(name), {
+  //   httpOnly: true,
+  //   path: "/",
+  // });
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.get("/about", (req, res) => {
