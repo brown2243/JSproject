@@ -31,6 +31,6 @@ JQuery 없이 순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만�
 ### 5. Three.js
 
 Three.js로 3D효과 및 다양한 것들 구현해보기
-참조 [three](https://threejs.org/), threejsfundamentals.org
+참조 [three](https://threejs.org/), [threejsfundamentals](threejsfundamentals.org)
 
 ---
