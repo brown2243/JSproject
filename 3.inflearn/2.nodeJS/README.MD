@@ -1,26 +1,17 @@
-# JS Study!
+# Node.js 교과서 - 기본부터 프로젝트 실습까지
 
-## JS를 공부하는 Repository
+강의 링크 : https://www.inflearn.com/course/%EB%85%B8%EB%93%9C-%EA%B5%90%EA%B3%BC%EC%84%9C/dashboard
 
-### 1. Learn JS Basic
+## 수강 이유
 
----
+- Javascripts 학습에 도움이 될 것 같아서
+- JS로 다 해보고 싶어서
 
-### 2. Practice_Work
+### 1. 노드 시작하기
 
-React.js : React_router_dom, React_Hooks(useEffect, useState, useRef), Axios
-Node.js : express.js, mongoose, cors, JWT, bcrypt, nodemon, morgan
+**Node.js는 크롬 V8 자바스크립트 엔진으로 빌드 된 자바 스크립트 실행기**
+서버의 역활도 수행할 수 있다.(**서버가 아님**)
 
----
-
-### 3. Inflearn
-
----
-
-### 4. Next.js
-
----
-
-### 5. Three.js
-
----
+노드는 V8과 libuv를 내부적으로 포함
+V8 엔진: 오픈 소스 자바스크립트 엔진] -> 속도 문제 개선
+libuv: 노드의 특성인 이벤트 기반, 비동기 I/O 모델을 구현한 라이브러리

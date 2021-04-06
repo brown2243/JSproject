@@ -1,4 +1,10 @@
-# JS 문법 및 개념 공부
+# 인터렉티브 웹 개발 제대로 시작하기
+
+강의 링크 : https://www.inflearn.com/course/interactive_web/dashboard
+
+## 수강 이유
+
+인터렉티브 웹 개발에 흥미가 생겨서
 
 ### 1. CSS Transform ans Animation
 
