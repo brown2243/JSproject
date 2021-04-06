@@ -18,9 +18,9 @@ JQuery 없이 순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만�
 
 ### 3. Inflearn
 
-- 인터렉티브 웹 개발 제대로 시작하기
-- 웹 게임을 만들며 배우는 React
-- Node.js 교과서 - 기본부터 프로젝트 실습까지
+- [인터렉티브 웹 개발 제대로 시작하기](https://github.com/brown2243/JSstudy/tree/master/3.inflearn/1.interactiveWeb)
+- [Node.js 교과서 - 기본부터 프로젝트 실습까지](https://github.com/brown2243/JSstudy/tree/master/3.inflearn/2.nodeJS)
+- [웹 게임을 만들며 배우는 React](https://github.com/brown2243/JSstudy/tree/master/3.inflearn/3.react_webgame)
 
 ---
 
@@ -31,6 +31,9 @@ JQuery 없이 순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만�
 ### 5. Three.js
 
 Three.js로 3D효과 및 다양한 것들 구현해보기
-참조 [three](https://threejs.org/), [threejsfundamentals](threejsfundamentals.org)
+참조 사이트
+
+- [three](https://threejs.org/)
+- [threejsfundamentals](https://threejsfundamentals.org)
 
 ---
