@@ -70,7 +70,7 @@
           // outputElem.innerHTML = ilbuniElem.offsetTop;
           let posY = ilbuniElem.getBoundingClientRect().top;
           outputElem.innerHTML = posY;
-
+          console.log(ilbuniElem.getBoundingClientRect());
           if (posY < window.innerHeight * 0.2) {
             ilbuniElem.classList.add("zoom");
           } else {
@@ -81,7 +81,9 @@
         window.addEventListener("scroll", function () {
           showValue();
         });
-
+        window.addEventListener("scroll", function (e) {
+          console.log(e);
+        });
         showValue();
       })();
     </script>

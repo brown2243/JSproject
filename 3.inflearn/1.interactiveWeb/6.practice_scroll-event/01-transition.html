@@ -32,8 +32,10 @@
                                               ${e.clientY - 15}px)`;
       });
 
-      ballElem.addEventListener("transitionstart", function (e) {
-        ballElem.classList.add("end");
+      ballElem.addEventListener("transitionend", function (e) {
+        console.log("transitionend");
+        console.log(e.elapsedTime);
+        ballElem.classList.toggle("end");
       });
       // transitionend
       // transitionstart

@@ -10,12 +10,12 @@
 // 태그.innerHtml = 'html 내용'
 // 태그.getContent
 
-const characters = document.querySelector('.characters')
-const pEle = document.createElement('p')
-pEle.innerHTML = '<span>Hey</span>'
-characters.appendChild(pEle)
-characters.removeChild(pEle)
-characters.removeChild(document.querySelector('.b'))
+const characters = document.querySelector(".characters");
+const pEle = document.createElement("p");
+pEle.innerHTML = "<span>Hey</span>";
+characters.appendChild(pEle);
+characters.removeChild(pEle);
+characters.removeChild(document.querySelector(".b"));
 
-const first = document.querySelector('.ilbuni')
-first.classList.toggle('special')
+const first = document.querySelector(".ilbuni");
+first.classList.toggle("special");
