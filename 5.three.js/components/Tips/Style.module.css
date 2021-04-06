@@ -1,0 +1,16 @@
+.ui {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  color: white;
+}
+.ui > div {
+  font-size: 20pt;
+  padding: 1em;
+  display: inline-block;
+}
+.ui > div.selected {
+  color: red;
+}
