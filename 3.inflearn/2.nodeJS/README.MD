@@ -1027,7 +1027,11 @@ Node Package Manager 노드의 패키지 매니저
 
 패키지를 설치하려면 npm install (여러개도 동시에 설치가능 morgan cookie-parser ...)
 
-개발용 패키지 설치도 가능
+dependencies와 devDependencies의 차이는 다음과 같습니다.
+
+- "dependencies": 프로덕션 환경에서 응용 프로그램에 필요한 패키지.
+- "devDependencies": 로컬 개발 및 테스트에만 필요한 패키지.
+  개발자 패키지 설치도 가능
 
 - npm install --save-dev 패키지명 또는 npm i -D 패키지명
 - devDependencies에 추가됨
@@ -1440,15 +1444,131 @@ single과 none, array, fields 미들웨어 존재
 
 ### 6.3 router 객체로 라우팅 분리하기
 
+#### 1. express.Router
+
+app.js가 길어지는 것을 막을 수 있음
+
+- userRouter의 get은 /user와 /가 합쳐져서 GET /user/가 됨
+
+```
+// indexRouter
+const express=  require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+  res.send('hello Express')
+})
+module.exports = router
+
+// userRouter
+const express=  require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+  res.send('hello user')
+})
+module.exports = router
+
+// app.js
+const path = require('path')
+const indexRouter = require(경로)
+const userRouter = require(경로)
+
+app.use('/', indexRouter)
+app.use('/user', userRouter)
+```
+
+<br />
+
+#### 2. 라우터 매개변수
+
+:id를 넣으면 req.params.id로 받을 수 있음
+동적으로 변하는 부분을 라우트 매개변수로 만듦
+
+```
+router.get('user/:id', (req,res) => {
+  console.log(req.params, req.query)
+})
+```
+
+- 일반 라우터보다 뒤에 위치해야 함
+- /users/123?limit=5&skip=10 주소 요청인 경우
+  {id:'123}, {limit:'5',skip:'10'}
+  <br />
+
 ####
 
 <br />
 
----
+#### 3. 404 미들웨어
+
+요청과 일치하는 라우터가 없는 경우를 대비해 404 라우터를 만들기
+
+```
+app.use((req,res,next) => {
+  res.status(404).send('Not found')
+})
+```
+
+<br />
+
+#### 4. 그룹화 하기
+
+주소가 같지만 메서드가 다른 코드가 있을 때 router.route로 묶을 수 있다.
+
+```
+router.get('/abc',(req,res) => {
+  res.send('get /abc')
+})
+router.post('/abc',(req,res) => {
+  res.send('post /abc')
+})
+
+router.route('/abc')
+  .get((req,res) => {
+    res.send('get /abc')
+  })
+  .post((req,res) => {
+    res.send('post /abc')
+  })
+```
+
+## <br />
 
 ### 6.4 req, res 객체 살펴보기
 
-####
+#### 1. req
+
+- req.app: req 객체를 통해 app 객체에 접근할 수 있습니다. req.app.get('port')와 같은 식으로 사용할 수 있습니다.
+- req.body: body-parser 미들웨어가 만드는 요청의 본문을 해석한 객체입니다.
+- req.cookies: cookie-parser 미들웨어가 만드는 요청의 쿠키를 해석한 객체입니다.
+- req.ip: 요청의 ip 주소가 담겨 있습니다.
+- req.params: 라우트 매개변수에 대한 정보가 담긴 객체입니다.
+- req.query: 쿼리스트링에 대한 정보가 담긴 객체입니다.
+- req.signedCookies: 서명된 쿠키들은 req.cookies 대신 여기에 담겨 있습니다.
+- req.get(헤더 이름): 헤더의 값을 가져오고 싶을 때 사용하는 메서드입니다
+
+<br />
+
+#### 2. res
+
+- res.app: req.app처럼 res 객체를 통해 app 객체에 접근할 수 있습니다.
+- res.cookie(키, 값, 옵션): 쿠키를 설정하는 메서드입니다.
+- res.clearCookie(키, 값, 옵션): 쿠키를 제거하는 메서드입니다.
+- res.end(): 데이터 없이 응답을 보냅니다.
+- res.json(JSON): JSON 형식의 응답을 보냅니다.
+- res.redirect(주소): 리다이렉트할 주소와 함께 응답을 보냅니다.
+- res.render(뷰, 데이터): 다음 절에서 다룰 템플릿 엔진을 렌더링해서 응답할 때 사용하는 메서드입니다.
+- res.send(데이터): 데이터와 함께 응답을 보냅니다. 데이터는 문자열일 수도 있고H TML일 수도 있으며, 버퍼일 수도 있고 객체나 배열일 수도 있습니다.
+  -res.sendFile(경로): 경로에 위치한 파일을 응답합니다.
+  -res.setHeader(헤더, 값): 응답의 헤더를 설정합니다.
+  -res.status(코드): 응답 시의 HTTP 상태 코드를 지정합니다.
+
+<br />
+
+#### 3. 기타
+
+메서드 체이닝을 지원하고 응답은 한번만 보내야한다.(에러발생)
 
 <br />
 
@@ -1456,8 +1576,16 @@ single과 none, array, fields 미들웨어 존재
 
 ### 6.5 템플릿 엔진 사용하기
 
-####
+#### 1. 템플릿 엔진
 
+HTML의 정적인 단점을 개선
+
+- 반복문, 조건문, 변수 등을 사용할 수 있음
+- 동적인 페이지 작성 가능
+- PHP, JSP와 유사함
+
+대표적으로 퍼그랑 넌적스가 사용되는 것 같은데
+프론트엔드 프레임워크를 사용한다면, 이부분은 따로 공부할 필요는 없어보임.
 <br />
 
 ---
@@ -1468,7 +1596,19 @@ single과 none, array, fields 미들웨어 존재
 
 ### 8.1 NoSQL vs SQL
 
-####
+#### 1.NoSQL
+
+MySQL같은 SQL 데이터베이스와는 다른 유형의 데이터
+NoSQL의 대표주자인 mongoDB(몽고디비) 사용
+|SQL(mySQL)|NoSQL(MongoDB)|
+|--------|--------|
+|규칙에 맞는 데이터 입력|자유로운 데이터 입력|
+|테이블 간 join 지원|컬렉션 간 join 미지원|
+|안정성, 일관성|확장성, 가용성|
+|용어(테이블,로우,컬럼)|용어(컬렉션, 다큐먼트, 필드)|
+
+JOIN: 관계가 있는 테이블끼리 데이터를 합치는 기능(몽고디비 aggregate로 흉내 가능)
+빅데이터, 메시징, 세션 관리 등(비정형 데이터)에는 몽고디비 사용하면 좋음
 
 <br />
 
@@ -1476,7 +1616,7 @@ single과 none, array, fields 미들웨어 존재
 
 ### 8.2 몽고디비, 컴퍼스 설치하기
 
-####
+#### 그냥 설치법 설명
 
 <br />
 
@@ -1484,7 +1624,27 @@ single과 none, array, fields 미들웨어 존재
 
 ### 8.3 데이터베이스, 컬렉션 생성하기
 
-####
+#### 1. 데이터베이스 생성하기
+
+```
+use 데이터베이스 명 (생성)
+show dbs(목록확인)
+db(현재 사용중인 데이터베이스 확인)
+```
+
+<br />
+
+#### 2. 컬렉션 생성하기
+
+따로 생성할 필요 없음
+
+- 다큐먼트를 넣는 순간 컬렉션도 자동 생성됨
+- 직접 생성하는 명령어도 있음
+
+```
+db.createCollection('이름')
+show collections(컬렉션 확인)
+```
 
 <br />
 
@@ -1492,7 +1652,78 @@ single과 none, array, fields 미들웨어 존재
 
 ### 8.4 CRUD 작업하기
 
-####
+#### 1. Create
+
+몽고디비는 컬럼을 정의하지 않아도 됨
+
+- 자유로움이 장점, 무엇이 들어올지 모른다는 단점
+- 자바스크립트의 자료형을 따름(차이점도 존재)
+- ObjectId: 몽고디비의 자료형으로 고유 아이디 역할을 함
+- save method로 저장
+
+<br />
+
+#### 2. Create(관계설정)
+
+컬렉션 간 관계를 강요하는 제한이 없으므로 직접 ObjectId를 넣어 연결
+사용자의 ObjectId를 찾은 뒤 댓글 컬렉션에 넣음
+
+<br />
+
+#### 3. Read
+
+find으로 모두 조회
+findOne으로 하나만 조회
+
+```
+db.users.find({}) // 데이터 db, 컬렉션 users에서 모두 찾음
+```
+
+<br />
+
+#### 4. Read(조건)
+
+두 번째 인수로 조회할 필드를 선택할 수 있음(1은 추가, 0은 제외)
+
+```
+db.users.find({}, {_id:0,name:1,married:1})
+```
+
+첫 번째 인수로 조회 조건 입력 가능
+$gt나 $or같은 조건 연산자 사용
+
+```
+db.users.find({ age:{$gt:30}, married:true}, {_id:0,name:1,married:1})
+db.users.find({ $or : [{age:{$gt:30}}, {married:true}]}, {_id:0,name:1,married:1})
+```
+
+정렬은 sort, 개수제한 limit, 건너뛰기 skip(js 체이닝)
+<br />
+
+#### 5. update
+
+update 메서드로 쿼리
+첫 번째 인수로 수정 대상을, 두 번째 인수로 수정 내용을 제공
+$set을 붙이지 않으면 다큐먼트 전체가 대체되므로 주의 // 몽구스는 자동으로 해줌
+
+```
+db.users.update({name:'nero'}, {$set :{comment: 'update 해보기!'}})
+```
+
+결과로 수정된 개수가 나옴
+
+<br />
+
+#### 6. delete
+
+remove 메서드로 쿼리
+첫 번째 인수로 삭제할 대상 조건 제공
+
+```
+db.users.remove({name:'nero'})
+```
+
+성공 시 삭제된 개수가 반환됨
 
 <br />
 
@@ -1500,7 +1731,205 @@ single과 none, array, fields 미들웨어 존재
 
 ### 8.5 몽구스 사용하기
 
-####
+#### 1. 몽구스 ODM
+
+- 몽고디비 작업을 쉽게 할 수 있도록 도와주는 라이브러리
+- ODM: Object Document Mapping: 객체와 다큐먼트를 매핑(1대1 짝지음)
+- 몽고디비에 없어 불편한 기능들을 몽구스가 보완
+- 테이블과 유사한 기능, JOIN 기능 추가
+- 프로젝트 세팅 후, 콘솔을 통해 경로로 이동한 후 package.json 설치
+
+<br />
+
+#### 2. 몽고디비 연결하기
+
+몽구스를 통해 몽고디비 연결하기
+인증은 admin 데이터베이스에서, 서비스는 dbName 데이터베이스에서
+
+```
+const mongoose = require('mongoose')
+
+const connect = () => {
+  if(process.env.NODE_ENV !== 'production'){
+    mongoose.set('debug',true)
+  }
+  mongoose.connect('mongodb://이름:비밀번호@localhost:27017/admin', {
+    dbName : 'nodeJS',
+    useNewUrlParser:true,
+    useCreateIndex:true,
+  }, (err) => {
+    console.log('연결 에러', err)
+  } else {
+    console.log('연결 성공')
+  })
+}
+mongoose.connection.on("error", (error) => {
+  console.error("몽고디비 연결 에러", error);
+});
+mongoose.connection.on("disconnected", () => {
+  console.error("몽고디비 연결이 끊겼습니다. 연결을 재시도합니다.");
+  connect();
+});
+
+module.exports = connect;
+```
+
+<br />
+
+#### 3. app 과 연결하기
+
+app.js로 연결
+schemas/index.js의 함수가 실행됨
+mongoose.connect 함수가 몽고디비에 연결을 시도
+mongoose.set은 디버깅 모드(모드를 켰을 때 콘솔에 쿼리가 찍힘)
+연결이 끊기면(disconnection) 다시 연결을 시도
+
+```
+const connect = require('./schemas');
+```
+
+<br />
+
+#### 4. 스키마 정의하기
+
+schemas 폴더 안에 작성
+
+- MySQL의 테이블처럼 정해진 데이터만 들어갈 수 있게 강제함
+- type은 자료형, require는 필수 여부 default는 기본값, unique는 고유 여부
+
+```
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  age: {
+    type: Number,
+    required: true,
+  },
+  married: {
+    type: Boolean,
+    required: true,
+  },
+  comment: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+```
+
+<br />
+
+#### 5. 라우터 작성하기
+
+프론트엔드 코드는 서버에 요청을 보내는 AJAX 요청 위주로
+서버 코드는 응답을 보내는 라우터 위주로 살펴보기
+
+```
+const express = require('express');
+const User = require('../schemas/user');
+
+const router = express.Router();
+
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    res.render('mongoose', { users });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+module.exports = router;
+
+```
+
+<br />
+
+#### 6. 사용자 라우터
+
+router.get, post, put, patch, delete 라우터 작성
+
+```
+const express = require('express');
+const User = require('../schemas/user');
+const Comment = require('../schemas/comment');
+
+const router = express.Router();
+
+router.route('/')
+  .get(async (req, res, next) => {
+    try {
+      const users = await User.find({});
+      res.json(users);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  })
+  .post(async (req, res, next) => {
+    try {
+      const user = await User.create({
+        name: req.body.name,
+        age: req.body.age,
+        married: req.body.married,
+      });
+      console.log(user);
+      res.status(201).json(user);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  });
+
+router.get('/:id/comments', async (req, res, next) => {
+  try {
+    const comments = await Comment.find({ commenter: req.params.id })
+      .populate('commenter');
+    console.log(comments);
+    res.json(comments);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+module.exports = router;
+
+```
+
+<br />
+
+#### 7. 라우터 연결하기
+
+app.js 에 연결
+
+```
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+...
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+app.use((req, res, next) => {
+  const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  error.status = 404;
+  next(error);
+});
+
+```
 
 <br />
 
@@ -1508,4 +1937,4 @@ single과 none, array, fields 미들웨어 존재
 
 ---
 
-강의 진행률은 60% 정도고 현재 더 필요하지 않아 멈춘상황.
+## 강의 진행률은 60% 정도고 필요하면 더 공부할 예정.
