@@ -31,6 +31,6 @@
 
 ### 5. Three.js
 
-- [Three.js fundamentals 학습](https://github.com/brown2243/JSstudy/tree/master/5.three.js)
+- [Three.js fundamentals 학습](https://github.com/brown2243/JSstudy/tree/master/5.three.js/1.fundamental)
 
 ---
