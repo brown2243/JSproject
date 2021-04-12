@@ -2,6 +2,7 @@
 
 참조
 
+- https://velog.io/@decody/ES6-Sheetsheet
 - https://ko.javascript.info/
 - https://developer.mozilla.org/ko/
 - https://www.zerocho.com/

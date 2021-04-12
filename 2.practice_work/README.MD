@@ -1,8 +1,8 @@
-# 순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만들어보기
+# javaScripts로 DOM 조작 및 각종 기능들 직접 만들어보기
 
-여기저기서 자료를 찾아 공부했고,
+여기저기서 자료를 찾아 공부했습니다.
 https://www.youtube.com/channel/UClb90NQQcskPUGDIXsQEz5Q
-유투버(Dev Ed)의 강의를 가장 많이 참조 했습니다.
+유투버(Dev Ed)의 영상을 가장 많이 참조 했습니다.
 
 ## 동기
 
