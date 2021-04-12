@@ -1,5 +1,5 @@
 {
-  "name": "threejs",
+  "name": "1.fundamental",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,13 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "next": "10.1.3",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "dat.gui": "^0.7.7",
     "file-loader": "^6.2.0",
-    "next": "10.0.9",
     "next-transpile-modules": "^6.3.0",
-    "react": "17.0.1",
     "react-dat-gui": "^4.0.3",
-    "react-dom": "17.0.1",
     "three": "^0.126.1",
     "three-orbit-controls": "^82.1.0",
     "tween": "^0.9.0"
