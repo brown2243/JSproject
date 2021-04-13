@@ -1222,19 +1222,44 @@ useEffect(() => {
 Hooks의 useMemo와 useCallback
 
 - useMemo
-  - 복잡한 함수 실행의 결과값을 기록하는 역활(복잡한 함수의 재실행 방지)
+  - 복잡한 함수 실행의 결과값을 기억하는 역활(복잡한 함수의 재실행 방지)
   - `const lottoNumbers = useMemo(() => getWinNumbers(), []);`
   - 이러면 useMemo가 getWinNumbers의 return 값을 기억함
 - useCallback
-  -
+  - 함수 자체를 기억하는 Hook
+  - 함수형 컴포넌트는 렌더링 될 때, 전체가 재실행되기 때문에 (복잡한)함수를 기억함으로 재실행시, 렌더링의 부담을 낮추는 용도.
 
 ### 6.6 Hooks에 대한 자잘한 팁들
+
+hooks 시리즈는 순서가 중요해서 중간에 바뀌면 안된다 함.
+
+- ex 조건문 사용(하면 안됌)
+
+  - 특정 조건에선 이 hook이 사용되는 방식(이런경우에 문제가 생김)
+
+- useEffect, useMemo, useCallback 안에서 useState 사용하면 안됨.
+- 권장은 안하지만, 순서가 정해진 반복문에서는 사용은 가능하다.
 
 ---
 
 ## Chap.7 틱택토
 
-### 7.1 틱택토와 useRedcuer 소개
+### 7.1 틱택토와 useReducer 소개
+
+틱택토는 3줄을 만들면 승리하는 3묵이라고 보면 된다.
+
+틱택토를 구현하기 위해 table, tr, td를 다 컴포넌트 화 함.
+
+useReducer라는 훅은 Redux의 핵심 부분인 Reducer를 그대로 들여왔음.
+
+- useReducer를 사용하면 Redux를 사용하지 않아도, 비슷한 효과를 낼 수 있음.
+- Context API까지 같이 사용하면 소규모 앱에서는 Redux를 대체할 수 있음
+  - 규모가 크면 Redux를 쓴다함. 비동기적인 작업의 불편함 때문에.
+- 값을 하위컴포넌트로 넘겨 줘야 하는 상황이 많을 때, 하나의 state로 통일할 수 있게 해줌
+- ` const [state, dispatch] = useReducer(reducer, initialState);`
+- useReducer의 3번째 인자는 지연초기화인데 거의 안씀.
+- initialState는 기존의 state를 오브젝트로 묶으면 됨
+- reducer는 state,action 두가지 인자를 받는 함수.
 
 ### 7.2 reducer, action. dispatch의 관계
 
