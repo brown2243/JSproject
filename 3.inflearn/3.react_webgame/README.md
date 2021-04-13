@@ -857,19 +857,134 @@ onChangeInput(e){
 
 ### 3.6 숫자야구 만들기
 
+- mywork - src - component - NumberBaseball
+- 3.숫자야구
+
 ### 3.7 Q&A
+
+getNumbers 함수를 따로 뺐는데 사실 class 안에 있어도 상관없음.
+다만 this를 안쓰면 따로 빼도 아무문제 없고, 다른 곳에서도 사용가능 하다.
+
+제로초는 Redux or Mobx 사용을 권장.
 
 ### 3.8 숫자야구 Hooks로 전환하기
 
+- class형 컴포넌트 => function 컴포넌트
+- state => useState
+- ref => useRef
+  ...
+
 ### 3.9 React DevTools
+
+크롬 확장 프로그램
+react개발에 도움이 되니 사용 권장.
 
 ### 3.10 shouldComponentUpdate
 
+- React가 렌더링을 수행하는 시점은 다음과 같다.
+
+  1. Props가 변경되었을 때
+  2. State가 변경되었을 때
+  3. forceUpdate() 를 실행하였을 때
+  4. 부모 컴포넌트가 렌더링되었을 때
+
+- React에서 1번,2번의 경우 정확하게는 setState가 실행되었을 때이다.(state, props가 변경되지 않아도)
+
+  - React는 state에 배열이나 오브젝트가 직접 변경된다면 변경된 것을 모른다.
+  - 이부분은 불변성과 연관이 있다.
+  - 그래서 react가 알수 있도록 새로운 배열이나, 오브젝트를 setState로 넣어주어야함
+    - setState(기존의 것을 펼치고, 새값을 추가).
+
+<!-- - 렌더함수가 리렌더링 되기에 변경되는 부분과 상관없는 부분도 저절로 리렌더링이 되는데 이것은 성능 저하로 이어진다. -->
+
+setState가 실행 되었을 때, 값이 변한게 없다면 class형 컴포넌트에서는 shouldComponentUpdate로 리렌더링을 방지할 수 있다.
+
+```
+shouldComponentUpdate(nextProps, nextState, nextContext){
+  // 조건 넣고 return 값이 true면 렌더링, false 면 pass
+}
+```
+
+항상 최적화를 고려하자.
+
 ### 3.11 PureComponent와 React.memo
+
+- 클래스형 컴포넌트
+  한가지 편한 방법은 Component를 PureComponent로 바꾸는 것이다.
+  `class Name extends PureComponent {...}`
+
+  PureComponent는 shouldComponentUpdate를 구현해놓은 component이다.
+
+  - setState가 실행되어도 값이 그대로라면 리렌더링을 하지 않는다.
+  - 다만 state값이 배열, 오브젝트같은 경우라면
+    <br />
+
+component를 쓰고 shouldComponentUpdate로 커스티마이징 하는 경우도 많다.
+
+- 함수형 컴포넌트
+  React.memo가 있음.
+
+  ```
+  // 이렇게 작성하면 state나 props가 변경되지 않으면 리렌더링 안함.
+  import React, { memo } from 'react';
+
+  const Try = memo(({tryInfo}) => {
+    return (
+      <li>
+        <div>{tryInfo.try}</div>
+        <div>{tryInfo.result}</div>
+      </li>
+    );
+  });
+  export default Try;
+  ```
+
+자식들이 전부 pureComponent나 memo가 적용되어 있다면 부모도 적용할 수 있다.
 
 ### 3.12 React.createRef
 
+```
+class형에서는 ref를 이렇게 넣어줌
+inputRef
+onInputRef = (c) => {this.inputRef = c}
+...
+<input ref={this.onInputRef} />
+
+// hook이 훨씬 간편
+const inputRef = useRef(null)
+<input ref={inputRef} />
+```
+
+```
+// React.createRef 예제
+// 사용할 땐 useRef처럼 current 사용해야 함
+import {createRef} from 'react
+...
+inputRef = createRef()
+<input ref={this.inputRef} />
+```
+
+함수형으로 하면 자유도가 더 높지만, createRef가 깔끔하다.
+
 ### 3.13 props와 state 연결하기
+
+위에도 언급했듯 props는 자식 컴포넌트에서 변경하면 안된다.  
+부모에서 바꿔줘야함.
+
+바꿔줘야 할 땐 props를 state로 연결해서 바꿔야함.
+
+- state를 선언하고 초기값에 props값을 넣어줌
+- state를 변경
+
+Context설명
+
+- 컴포넌트구조가 A -> B -> C 일 때
+- C 컴포넌트에 A컴포넌트 값을 props로 넘기려면 B 컴포넌트는 그 값을 사용하지 않더라도 B 컴포넌트를 지나가야 한다.
+
+- 만약 컴포넌트 구조가 복잡해진다면 A -> B -> C -> D -> E... 어지럽다.
+- props를 가지고 있으면 사용하지 않더라도 props가 변경되면 렌더링 됨(비효율)
+- A 에서 E를 한방에 줄수있다면 그게 더 효율적이다.
+- 그런 일을 하는게 Context고 Redux는 Context의 응용이다.
 
 ---
 
@@ -877,13 +992,37 @@ onChangeInput(e){
 
 ### 4.1 React 조건문
 
+render함수 안에서는 for과 if를 못 쓴다. 다른 방식을 써야한다.
+
+- for => map,reduce등 순회 메서드 사용
+- if => 삼항연산자 {조건 ? true : false}
+
 ### 4.2 setTimeout 넣어 반응 속도 체크
+
+로직은
+
+- 상태를 3가지로 구분한다. 시작전, 시작, 클릭후
+- 시작전으로 시작하고 setTimeout에 랜덤시간을 넣고
+- setTimeout에는 시작전을 시작으로 바꾸는 함수를 넣음
+- 시작하고 클릭을 하면 시작시간에서 클릭할 때 시간을 빼서 반응속도를 체크
+- 반응속도를 배열에 넣어 평균 reduce로 구한다음 보여줌
+
+코드는 4.반응속도체크, mywork- src - ResponseCheck 에 있음.
 
 ### 4.3 성능체크와 Q&A
 
+reset기능은 반응속도 기록하는 배열 초기화.
+
 ### 4.4 반응속도체크 Hooks로 전환하기
 
+코드는 4.반응속도체크, mywork- src - ResponseCheck 에 있음.
+
 ### 4.5 return 내부에 for과 if 쓰기
+
+render함수 안의 return 내부에 for과 if를 쓰면 진짜 지저분해져서 권장 하지 않는다.
+(jsx안에 함수를 선언하고 그 안에 쓴다는 말인듯.)
+
+즉시 실행 함수를 선언하고 그안에 if와 for을 사용하는 방식.
 
 ---
 
@@ -891,15 +1030,120 @@ onChangeInput(e){
 
 ### 5.1 리액트 라이프사이클 소개
 
+가위바위보 구현 로직은
+
+- 가위 바위 보가 그려진 스프라이트 이미지를
+  3분의 1 px 만큼 이동시키며 컴퓨터의 가위바위보 역활을 함
+- 밑에 가위,바위,보 버튼으로 플레이어의 가위바위보 선택
+- 승패 기록
+
+React 라이프사이클(생애주기) 순서(class)
+
+- constructor -> ref -> render -> componentDidMount ->
+  (setState/props 변경) -> shouldComponentUpdate(true) -> reRendering -> componentDidUpdate ->
+  (부모가 컴포넌트를 제거할 때) -> componentWillUnmount -> 소멸
+
+- componentDidMount() {
+  // 컴포넌트가 첫 렌더링 된 후
+  }
+
+- componentDidUpdate() {
+  // 두번째 렌더링부터 실행
+  }
+
+- componentWillUnmount() {
+  // 컴포넌트가 제거 되기 직전
+  }
+
 ### 5.2 setInterval과 라이프사이클 연동하기
+
+- componentDidMount() {
+  // 컴포넌트가 첫 렌더링 된 후
+  // 여기서 비동기 요청을 많이 함(html요소가 불러진 후기 때문에)
+  }
+- componentWillUnmount() {
+  // 컴포넌트가 제거 되기 직전
+  // 여기서는 비동기 요청 정리를 많이 함.
+  }
+- setInterval을 실행 했다면, setInterval을 clear하지 않으면 계속해서 반복함. 컴포넌트가 사라졌다 하더라도 계속 반복.
+  만약 clear없이 컴포넌트가 없어졌다 다시 생긴다면, setInterval이 작동 중인데 한번 더 실행하기 때문에 두배 빠르게 반복 하는 셈.
+  반복되는 것도 문제지만 메모리를 차지하기 때문에(메모리 누수)
+  정리 해주는게 반드시 필요하다.
+
+- 비동기 함수가 바깥의 함수를 참조하면 클로저 문제가 발생할 수 있음.
 
 ### 5.3 가위바위보 게임 만들기
 
+코드 참조
+
 ### 5.4 고차 함수와 Q&amp;A
+
+이부분은 아직도 잘 이해가 안됌
+
+```
+// 이렇게 작성되있는 코드를
+onClickBtn = (choice) =>  {...}
+...
+<button ... onClick={(e)=> this.onClickBtn} />
+
+// 이렇게 바꿀수 있다 함.
+onClickBtn = (choice) => (e) => {...}
+...
+<button ... onClick={this.onClickBtn} />
+```
+
+JS 함수패턴이고, 고차함수라고 함.
 
 ### 5.5 Hooks와 useEffect
 
+Hooks에서 class 컴포넌트의 componentDidMount, componentDidUpdate,componentWillUnmount의 역활을 해주는 것이 useEffect이다.
+
+```
+  useEffect(() => {
+    // componentDidMount, componentDidUpdate 대체 (1대1 대응 아님)
+    interval.current = setInterval(changeHand, 1000);
+    return () => {
+      // componentWillUnmount 대체, cleanup부분
+      clearInterval(interval.current);
+    };
+  }, [imgCoord]);
+  // 2번째 배열의 값이 바뀌면 componentDidUpdate 작동(컴포넌트 업데이트)
+  // 2번째 배열을 빈 배열이라면 사실상 componentDidMount와 같다.
+```
+
+ref https://rinae.dev/posts/a-complete-guide-to-useeffect-ko
+
 ### 5.6 클래스와 Hooks 라이프사이클 비교
+
+- useEffect를 여러번 쓰는 경우도 있다.
+- memo를 사용하자.
+- 클래스에서는 가로단위로
+- hooks에서는 세로단위로 생각하라는데
+- 이부분은 잘 이해는 안된다...
+
+```
+//                        result, imgCoord, score
+// componentDidMount
+// componentDidUpdate
+// componentWillUnmount
+
+// componentDidMount() {
+//   this.setState({
+//     imgCoord: 3,
+//     score: 1,
+//     result: 2,
+//   })
+// }
+
+// useEffect(() => {
+//   setImgCoord();
+//   setScore();
+// }, [imgCoord, score]);
+// useEffect(() => {
+//   setResult();
+// }, [result]);
+
+```
 
 ---
 
@@ -907,13 +1151,82 @@ onChangeInput(e){
 
 ### 6.1 로또 추첨기 컴포넌트
 
+- 제로초는 주로 반복문을 기점으로 컴포넌트를 분리한다 함.
+- 제일 마지막 자식 컴포넌트는 퓨어컴포넌트가 좋음 or Memo처리
+  (주로 화면 역활만 하기 때문)
+
 ### 6.2 setTimeout 여러 번 사용하기
+
+반복문으로 setTimeout을 여러번 사용해서
+번호가 하나씩 나오는 효과.
+
+```
+    for (let i = 0; i < winNumbers.length - 1; i++) {
+      this.timeouts[i] = setTimeout(() => {
+        this.setState((prevState) => {
+          return {
+            winBalls: [...prevState.winBalls, winNumbers[i]],
+          };
+        });
+      }, (i + 1) * 1000);
+    }
+```
 
 ### 6.3 componentDidUpdate
 
+라이프사이클에 맞춰서 코드를 작성하는 파트
+
+```
+  componentDidMount() {
+    ...
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    ...
+  }
+
+  componentWillUnmount() {
+    ...
+  }
+```
+
+componentDidUpdate는 잘못 작성하면 재앙이 발생할 수 있다.
+
 ### 6.4 useEffect로 업데이트 감지하기
 
+설명자체는 다 위에서 했고, 코드를 적용하는 과정
+
+```
+useEffect(() => {
+    console.log("useEffect");
+    for (let i = 0; i < winNumbers.length - 1; i++) {
+      timeouts.current[i] = setTimeout(() => {
+        setWinBalls((prevBalls) => [...prevBalls, winNumbers[i]]);
+      }, (i + 1) * 1000);
+    }
+    timeouts.current[6] = setTimeout(() => {
+      setBonus(winNumbers[6]);
+      setRedo(true);
+    }, 7000);
+    return () => {
+      timeouts.current.forEach((v) => {
+        clearTimeout(v);
+      });
+    };
+  }, [timeouts.current]); // 빈 배열이면 componentDidMount와 동일
+  // 배열에 요소가 있으면 componentDidMount랑 componentDidUpdate 둘 다 수행
+```
+
 ### 6.5 useMemo와 useCallback
+
+Hooks의 useMemo와 useCallback
+
+- useMemo
+  - 복잡한 함수 실행의 결과값을 기록하는 역활(복잡한 함수의 재실행 방지)
+  - `const lottoNumbers = useMemo(() => getWinNumbers(), []);`
+  - 이러면 useMemo가 getWinNumbers의 return 값을 기억함
+- useCallback
+  -
 
 ### 6.6 Hooks에 대한 자잘한 팁들
 
