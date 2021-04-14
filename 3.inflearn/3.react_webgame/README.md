@@ -1335,7 +1335,64 @@ useCallback, React.Memo로 최적화 하는 과정.
 
 ### 8.1 Context API 소개와 지뢰찾기
 
+// 다시봐도 지뢰찾기는 엄청 복잡하네...
+
+useReducer는 Redux에서 차용한 것으로 state가 여러개일때,
+하나로 묶고, state를 바꿀때는 action을 dispatch해서 바꾼다!
+
+Redux와의 차이점은 Redux는 state가 동기적으로 바뀌지만
+useReducer는 비동기적으로 바뀐다.
+
+Context API 설정을하면 값을 바로 가져올 수 있음.
+
 ### 8.2 createContext와 Provider
+
+React.createContext와 Provider가 있다.
+
+```
+import { createContext } from 'react'
+...
+const TableContext = createContext({
+  // 초기값, 모양만 맞춰줌.
+  tableData:[],
+  dispatch:() => {}
+})
+...
+// 이렇게 provider로 묶어줘야함.
+// 이러면 자식 컴포넌트에서 tableData와 dispatch에 접근할 수 있다.
+<TableContext.Provider value={{
+  tableData: state.tableData, dispatch
+}}>
+...
+</TableContext.Provider>
+```
+
+value에 state를 직접 담으면 state가 변경될 때, 모든 자식들이 리렌더링 되기 때문에 성능이슈가 있을 수 있다.
+이것을 방지하기 위해 캐싱을 해줘야한다.(useMemo)
+
+```
+const TableContext = createContext({
+  // 초기값, 모양만 맞춰줌.
+  tableData:[],
+  dispatch:() => {}
+})
+...
+const value = useMemo(() => ({ tableData: state.tableData, dispatch }), [state.tableData])
+<TableContext.Provider value={value}>
+...
+</TableContext.Provider>
+```
+
+프로바이더로 스테이트를 가져올 때는 useContext를 사용
+
+```
+import { useContext } from 'react'
+import { TableContext } from ...
+const value = useContext(TableContext)
+const {dispatch} = useContext(TableContext)
+```
+
+참고로 context api는 성능최적화하기가 엄청 힘들다.
 
 ### 8.3 useContext 사용해 지뢰 칸 렌더링
 
@@ -1349,8 +1406,10 @@ useCallback, React.Memo로 최적화 하는 과정.
 
 ### 8.8 Context api 최적화
 
+지뢰찾기는 내용이 복합해서 8.3 ~ 8.7 강좌의 대부분이 코드작성과, 지뢰찾기 논리에 관한 내용임.
+
+8.8은 React.memo 최적화 하는 내용.
+
 ---
 
-```
-
-```
+# 이렇게 강좌의 복습을 마칩니다.
