@@ -6,8 +6,6 @@
 
 - React를 더 자세히 공부하고 싶어서
 
----
-
 처음 이 강좌를 공부할 때는 create-react-app으로 공부했었음(mywork)
 
 ---
@@ -1265,9 +1263,71 @@ useReducer라는 훅은 Redux의 핵심 부분인 Reducer를 그대로 들여왔
 
 ### 7.3 action 만들어 dispatch 하기
 
+` const [state, dispatch] = useReducer(reducer, initialState);`
+
+- reducer 함수는 action들의 이름과 실행사항을 포함하고 있다
+- dispatch({type:action명, 변수}) `dispatch({ type: SET_WINNER, winner: 'O' })`
+- reducer는 dispatch로 전달받은 action명에 해당하는 내용을 실행
+  ```
+  // ex
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case SET_WINNER:
+        // state.winner = action.winner; 이렇게 하면 안됨.
+        return {
+          ...state,
+          winner: action.winner,
+        };
+      case CLICK_CELL: {
+        const tableData = [...state.tableData];
+        tableData[action.row] = [...tableData[action.row]]; // immer라는 라이브러리로 가독성 해결
+        tableData[action.row][action.cell] = state.turn;
+        return {
+          ...state,
+          tableData,
+          recentCell: [action.row, action.cell],
+        };
+      }
+      case CHANGE_TURN: {
+        return {
+          ...state,
+          turn: state.turn === 'O' ? 'X' : 'O',
+        };
+      }
+      case RESET_GAME: {
+        return {
+          ...state,
+          turn: 'O',
+          tableData: [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', ''],
+          ],
+          recentCell: [-1, -1],
+        };
+      }
+      default:
+        return state;
+    }
+  };
+  // dispatch 아래처럼 작동.
+  dispatch({ type: SET_WINNER, winner: null });
+  dispatch({ type: RESET_GAME });
+  dispatch({ type: CHANGE_TURN });
+  ```
+
 ### 7.4 틱택토 구현하기
 
+위의 내용을 코드로 구현하는 파트
+
+- mywork -> src -> component -> TictacToe
+- 7.틱택토
+
+에 코드 있음.
+
 ### 7.5 테이블 최적화하기
+
+useCallback, React.Memo로 최적화 하는 과정.
 
 ---
 
