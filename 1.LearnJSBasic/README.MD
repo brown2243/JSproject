@@ -1,5 +1,7 @@
 # JS 개념 및 문법 공부
 
+https://ko.javascript.info/ 사이트를 메인으로 학습.
+
 ---
 
 ## 목차
@@ -10,9 +12,12 @@
 
    1. ES5
    2. ES6
-   3. 화살표함수와 일반함수의 차이
-   4. Class
-   5. 비동기함수
+   3. 자료구조와 자료형
+   4. 함수 심화
+   5. Object Basic
+   6. ProtoType
+   7. Class
+   8. 비동기함수
       <br />
 
 2. JavaScripts 동작원리
@@ -23,22 +28,22 @@
 
 JavaScript 는 언어이고, ECMAScript 는 규격/표준이다.
 
-### ES5(2009)
+### 1. ES5(2009)
 
 - Array Method
 
-- isArray // 배열체크
-- forEach // 순회
-- map // 배열 내의 모든 요소에 주어진 함수를 호출한 결과를 새로운 배열을 반환.
-- filter // 주어진 함수의 테스트를 통과하는 모든 요소를 새로운 배열로 반환.
-- reduce // 배열의 각 요소에 대해 주어진 리듀서(reducer) 함수를 실행하고, 하나의 결과값을 반환.
-- some // 배열 안의 어떤 요소라도 주어진 판별 함수를 통과하는지 테스트.
-- every // 배열 안의 모든 요소가 주어진 판별 함수를 통과하는지 테스트.
-- indexOf // 주어진 value의 인덱스값 반환.
+  - isArray // 배열체크
+  - forEach // 순회
+  - map // 배열 내의 모든 요소에 주어진 함수를 호출한 결과를 새로운 배열을 반환.
+  - filter // 주어진 함수의 테스트를 통과하는 모든 요소를 새로운 배열로 반환.
+  - reduce // 배열의 각 요소에 대해 주어진 리듀서(reducer) 함수를 실행하고, 하나의 결과값을 반환.
+  - some // 배열 안의 어떤 요소라도 주어진 판별 함수를 통과하는지 테스트.
+  - every // 배열 안의 모든 요소가 주어진 판별 함수를 통과하는지 테스트.
+  - indexOf // 주어진 value의 인덱스값 반환.
 
 - Object Getter and Setter
 
-- Getters and Setters 프로퍼티를 지원합니다.
+  - Getters and Setters 프로퍼티를 지원합니다.
 
 - Strict mode
   "use strict"를 통해 깨끗한 코드를 작성하는데 도움을 줍니다.
@@ -46,14 +51,14 @@ JavaScript 는 언어이고, ECMAScript 는 규격/표준이다.
 - JSON
   이전에는 주로 XML을 사용하다가, JSON 데이터포맷의 붐이 일어나면서 지원하게 됐습니다.
 
-- JSON.parse() // JSON 문자열의 구문을 분석하고, 그 결과에서 JavaScript 값이나 객체를 생성합니다
-- JSON.stringify() // JavaScript 값이나 객체를 JSON 문자열로 변환
+  - JSON.parse() // JSON 문자열의 구문을 분석하고, 그 결과에서 JavaScript 값이나 객체를 생성합니다
+  - JSON.stringify() // JavaScript 값이나 객체를 JSON 문자열로 변환
 
 ref https://codify.tistory.com/24
 
 ---
 
-### ES6(2015)
+### 2. ES6(2015)
 
 - 변수의 선언방식
   - 기존의 var는 함수형 스코프였지만 let, const는 블록 스코프
@@ -77,9 +82,9 @@ ref https://codify.tistory.com/24
 
 ref https://velog.io/@bbio3o/JavaScript-ES5-ES6-%ED%8A%B9%EC%A7%95
 
----
+<br />
 
-### 화살표함수와 일반함수의 차이
+#### 화살표 함수와 일반 함수의 차이
 
 - 일반함수의 this는 자신을 가장 마지막으로 품고 있는 scope로 항상 변한다.
 - 화살표함수는 this와 arguments를 바인딩 하지 않는다.
@@ -110,31 +115,146 @@ this가 없을 때는 new를 통해 객체 생성이 불가능하다.
 
 https://velog.io/@leeeeunz/TIL-34.-Arrow-Function%EA%B3%BC-Function%EC%9D%98-%EC%B0%A8%EC%9D%B4
 
-### Class
+---
 
-JS는 class가 없었지만, ES6때 추가 되었음. semantic-sugar이지만 가독성 향상.
+### 3. 자료구조와 자료형
 
-클래스는 특정 객체를 생성하기 위해 변수와 메소드를 정의하는 일종의 틀이고 그 틀로 생성한 객체는 인스턴스다.(메모리 할당)
+1.  원시값의 메서드
 
-자세한 내용은 https://ko.javascript.info/class 참고.
+    - 원시형의 종류
+      - string
+      - number
+      - bigint
+      - boolean
+      - symbol
+      - null
+      - undefined
 
-### 비동기 함수
+2.  숫자형
+3.  문자열
+4.  배열
+5.  배열과 메서드
+6.  iterable 객체
+
+    1.  반복 가능한(iterable) 객체는 `[Symbol.iterator]` 메서드가 구현 되어있는 객체 입니다.
+    2.  이터러블 이라는 개념을 사용하면 어떤 객체에든 for..of 반복문을 적용할 수 있습니다.
+        <br />
+
+7.  맵과 셋
+
+    1.  맵(Map)은 키가 있는 데이터를 저장한다는 점에서 객체와 유사합니다. 다만, 맵은 키에 다양한 자료형을 허용한다는 점에서 차이가 있습니다.
+
+        - new Map() – 맵을 만듭니다.
+        - map.set(key, value) – key를 이용해 value를 저장합니다.
+        - map.get(key) – key에 해당하는 값을 반환합니다. key가 존재하지 않으면 undefined를 반환합니다.
+        - map.has(key) – key가 존재하면 true, 존재하지 않으면 false를 반환합니다.
+        - map.delete(key) – key에 해당하는 값을 삭제합니다.
+        - map.clear() – 맵 안의 모든 요소를 제거합니다.
+        - map.size – 요소의 개수를 반환합니다.
+        - map.keys() – 각 요소의 키를 모은 반복 가능한(iterable, 이터러블) 객체를 반환합니다.
+        - map.values() – 각 요소의 값을 모은 이터러블 객체를 반환합니다.
+        - map.entries() – 요소의 [키, 값]을 한 쌍으로 하는 이터러블 객체를 반환합니다. 이 이터러블 객체는 for..of반복문의 기초로 쓰입니다.
+
+        ```
+        let map = new Map();
+
+        map.set('1', 'str1');   // 문자형 키
+        map.set(1, 'num1');     // 숫자형 키
+        map.set(true, 'bool1'); // 불린형 키
+
+        // 객체는 키를 문자형으로 변환한다는 걸 기억하고 계신가요?
+        // 맵은 키의 타입을 변환시키지 않고 그대로 유지합니다.
+        // 따라서 아래의 코드는 출력되는 값이 다릅니다.
+        alert( map.get(1)   ); // 'num1'
+        alert( map.get('1') ); // 'str1'
+
+        alert( map.size ); // 3
+        ```
+
+    2.  map[key]는 Map을 쓰는 바른 방법이 아닙니다.
+
+        - map을 사용할 땐 map전용 메서드 set, get 등을 사용해야만 합니다.
+
+    3.  맵은 값이 삽입된 순서대로 순회를 실시합니다. 객체가 프로퍼티 순서를 기억하지 못하는 것과는 다릅니다.
+        <br />
+
+8.  위크맵과 위크셋
+9.  Object.keys, values, entries
+10. 구조 분해 할당
+11. Date 객체와 날짜
+12. JSON과 메서드
 
 ---
 
+### 4. 함수 심화
+
+1. 재귀와 스택
+2. 나머지 매개변수와 전개 문법
+
+   1. 상당수의 자바스크립트 내장 함수는 인수의 개수에 제약을 두지 않습니다.
+   2. 함수 정의 방법과 상관없이 함수에 넘겨주는 인수의 개수엔 제약이 없습니다.
+
+      ```
+        function sum(a, b) {
+            return a + b;
+        }
+
+        alert( sum(1, 2, 3, 4, 5) );
+        // error 발생 안함.
+      ```
+
+   3. 여분의 매개변수는 그 값들을 담을 배열 이름을 마침표 세 개 ...뒤에 붙여주면 함수 선언부에 포함시킬 수 있습니다.
+
+      ```
+      // 나머지 매개변수는 항상 마지막에 있어야 합니다.
+      // args는 배열의 이름입니다.
+      function sumAll(...args) {
+           let sum = 0;
+           for (let arg of args) sum += arg;
+           return sum;
+       }
+       alert( sumAll(1, 2, 3) ); // 6
+      ```
+
+   4. arguemnts라는 특별한 유사 배열 객체(array-like object)를 이용하면 인덱스를 사용해 모든 인수에 접근할 수 있습니다.
+
+      ```
+      function showName() {
+        alert( arguments.length );
+        alert( arguments[0] );
+        alert( arguments[1] );
+
+      // arguments는 이터러블 객체이기 때문에
+      // for(let arg of arguments) alert(arg); 를 사용해 인수를 나열할 수 있습니다.
+      }
+
+      // 2, Julius, Caesar가 출력됨
+      showName("Julius", "Caesar");
+
+      // 1, Bora, undefined가 출력됨(두 번째 인수는 없음)
+      showName("Bora");
+      ```
+
+   5. spread 연산자...은 이터러블 객체를 인수 목록으로 전개합니다.
+      <br />
+
+3. 변수의 유효범위와 클로저
+4. 오래된 'var'
+5. 전역 객체
+6. 객체로서의 함수와 기명 함수 표현식
+7. 'new Function' 문법
+8. setTimeout과 setInterval을 이용한 호출 스케줄링
+9. call/apply와 데코레이터, 포워딩
+10. 함수 바인딩
+11. 화살표 함수 다시 살펴보기
+
 ---
 
-## 자바스크립트 동작원리
-
-### 이벤트루프
+### 5. Object Basic
 
 ---
 
-### this, 전역컨텍스트
-
----
-
-### ProtoType
+### 6. ProtoType
 
 #### 사전 준비
 
@@ -490,11 +610,38 @@ Object.create를 호출하면 obj의 모든 프로퍼티를 포함한 완벽한 
 
 **Object.setPrototypeOf나 obj.**proto**=를 써서 프로토타입을 그때그때 바꾸는 연산은 객체 프로퍼티 접근 관련 최적화를 망치기 때문에 매우 느립니다.**
 
-refference
+reference
 
-https://ko.javascript.info/prototype-inheritance
+https://ko.javascript.info/object-properties
+https://ko.javascript.info/prototypes
 https://developer.mozilla.org/ko/docs/Web/JavaScript/Inheritance_and_the_prototype_chain
 [출처: https://mygumi.tistory.com/312 [마이구미의 HelloWorld]](https://mygumi.tistory.com/312)
+
+---
+
+### 7. Class
+
+JS는 class가 없었지만, ES6때 추가 되었음. semantic-sugar이지만 가독성 향상.
+
+클래스는 특정 객체를 생성하기 위해 변수와 메소드를 정의하는 일종의 틀이고 그 틀로 생성한 객체는 인스턴스다.(메모리 할당)
+
+자세한 내용은 https://ko.javascript.info/class 참고.
+
+---
+
+### 8. 비동기 함수
+
+---
+
+---
+
+## 자바스크립트 동작원리
+
+### 이벤트루프
+
+---
+
+### this, 전역컨텍스트
 
 ---
 
