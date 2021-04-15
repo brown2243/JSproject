@@ -2,6 +2,8 @@
 
 ## 목차(학습 기록 링크)
 
+클릭하면 세부내용을 볼 수 있습니다.
+
 ### 1. Learn JS Basic
 
 [JS 문법 공부 및 간단한 Clone 코딩](https://github.com/brown2243/JSstudy/tree/master/1.LearnJSBasic)
@@ -14,7 +16,7 @@
 
 ---
 
-### 3. Inflearn
+### 3. Inflearn 강좌
 
 - ["인터렉티브 웹 개발 제대로 시작하기" 학습](https://github.com/brown2243/JSstudy/tree/master/3.inflearn/1.interactiveWeb)
 - ["Node.js 교과서 - 기본부터 프로젝트 실습까지" 학습](https://github.com/brown2243/JSstudy/tree/master/3.inflearn/2.nodeJS)
