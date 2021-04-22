@@ -17,7 +17,7 @@ https://ko.javascript.info/ 사이트를 메인으로 학습.
    5. Object Basic
    6. ProtoType
    7. Class
-   8. 비동기함수
+   8. `Promise`와 async, await
       <br />
 
 2. JavaScripts 동작원리
@@ -78,7 +78,7 @@ ref https://codify.tistory.com/24
   - `export default, export`
 - Class
   - 하지만 내부적으로는 그대로 프로토타입을 따릅니다.
-- Promise // 비동기 함수
+- `Promise` // 비동기 함수
 
 ref https://velog.io/@bbio3o/JavaScript-ES5-ES6-%ED%8A%B9%EC%A7%95
 
@@ -499,6 +499,67 @@ https://velog.io/@leeeeunz/TIL-34.-Arrow-Function%EA%B3%BC-Function%EC%9D%98-%EC
       - 아래 그림에서 볼 수 있듯이 cachingDecorator(func)를 호출하면 ‘래퍼(wrapper)’, function(x)이 반환됩니다. 래퍼 function(x)는 func(x)의 호출 결과를 캐싱 로직으로 감쌉니다(wrapping).
 
 10. 함수 바인딩
+
+- setTimeout에 메서드를 전달할 때처럼, 객체 메서드를 콜백으로 전달할 때 ’this 정보가 사라지는’ 문제가 생깁니다.
+
+- 브라우저 환경에서 setTimeout 메서드는 조금 특별한 방식으로 동작합니다. 인수로 전달받은 함수를 호출할 때, this에 window를 할당합니다(Node.js 환경에선 this가 타이머 객체가 되는데, 여기선 중요하지 않으므로 넘어가겠습니다). 따라서 위 예시의 this.firstName은 window.firstName가 되는데, window 객체엔 firstName이 없으므로 undefined가 출력됩니다. 다른 유사한 사례에서도 대부분 this는 undefined가 됩니다.
+
+- 1. 래퍼
+  - `setTimeout(() => user.sayHi(), 1000); // Hello, John!`
+- 2. 바인드
+
+  - bind를 적용한 함수의 컨텍스트는 완전히 고정됩니다. 한번 고정되면 바꿀 방법이 없습니다. // 두번 써도 안됌(첫 번째로 고정)
+  - `let boundFunc = func.bind(context);`
+
+    ```
+    let user = {
+      firstName: "John"
+    };
+
+    function func() {
+      alert(this.firstName);
+    }
+
+    let funcUser = func.bind(user);
+    funcUser(); // John
+    //////////////////////////////////////////////
+    let user = {
+      firstName: "John",
+      sayHi() {
+        alert(`Hello, ${this.firstName}!`);
+      }
+    };
+    let sayHi = user.sayHi.bind(user); // (*)
+    // 이제 객체 없이도 객체 메서드를 호출할 수 있습니다.
+    sayHi(); // Hello, John!
+    setTimeout(sayHi, 1000); // Hello, John!
+    // 1초 이내에 user 값이 변화해도
+    // sayHi는 기존 값을 사용합니다.
+    user = {
+      sayHi() { alert("또 다른 사용자!"); }
+    };
+    ```
+
+- 부분 적용
+
+  - `let bound = func.bind(context, [arg1], [arg2], ...);`
+
+    ```
+    function mul(a, b) {
+      return a * b;
+    }
+
+    let double = mul.bind(null, 2);
+
+    alert( double(3) ); // = mul(2, 3) = 6
+    alert( double(4) ); // = mul(2, 4) = 8
+    alert( double(5) ); // = mul(2, 5) = 10
+    ```
+
+  - 그런데 부분 함수는 왜 만드는 걸까요?
+
+    가독성이 좋은 이름(double, triple)을 가진 독립 함수를 만들 수 있다는 이점 때문입니다. 게다가 bind를 사용해 첫 번째 인수를 고정할 수 있기 때문에 매번 인수를 전달할 필요도 없어지죠.
+
 11. 화살표 함수 다시 살펴보기
 
 ---
@@ -1205,15 +1266,364 @@ https://developer.mozilla.org/ko/docs/Web/JavaScript/Inheritance_and_the_prototy
 
 ### 7. Class
 
-JS는 class가 없었지만, ES6때 추가 되었음. semantic-sugar이지만 가독성 향상.
+JS는 class가 없었지만, ES6때 추가 되었음.
 
 클래스는 특정 객체를 생성하기 위해 변수와 메소드를 정의하는 일종의 틀이고 그 틀로 생성한 객체는 인스턴스다.(메모리 할당)
 
-자세한 내용은 https://ko.javascript.info/class 참고.
+1. 클래스와 기본 문법
+
+   - 클래스는 다음과 같은 기본 문법을 사용해 만들 수 있습니다.
+
+     ```
+     class MyClass {
+       // 여러 메서드를 정의할 수 있음
+       constructor() { ... }
+       method1() { ... }
+       method2() { ... }
+       method3() { ... }
+       ...
+     }
+     ```
+
+     - 객체의 기본 상태를 설정해주는 생성자 메서드 constructor()는 new에 의해 자동으로 호출되므로, 특별한 절차 없이 객체를 초기화 할 수 있습니다.
+     - 메서드 사이엔 쉼표가 없습니다.
+
+   - 클래스는 단순한 편의 문법이 아닙니다
+
+     ```
+     // class User와 동일한 기능을 하는 순수 함수를 만들어보겠습니다.
+
+      // 1. 생성자 함수를 만듭니다.
+      function User(name) {
+        this.name = name;
+      }
+      // 모든 함수의 프로토타입은 'constructor' 프로퍼티를 기본으로 갖고 있기 때문에
+      // constructor 프로퍼티를 명시적으로 만들 필요가 없습니다.
+
+      // 2. prototype에 메서드를 추가합니다.
+      User.prototype.sayHi = function() {
+        alert(this.name);
+      };
+
+      // 사용법:
+      let user = new User("John");
+      user.sayHi();
+     ```
+
+     - `class`로 만든 함수엔 특수 내부 프로퍼티인 `[[FunctionKind]]`:"classConstructor"가 이름표처럼 붙습니다.
+     - 이런 검증 과정이 있기 때문에 클래스 생성자를 new와 함께 호출하지 않으면 에러가 발생합니다.
+     - 클래스 메서드는 열거할 수 없습니다(non-enumerable).
+     - 클래스는 항상 엄격 모드로 실행됩니다(`use strict`).
+
+2. 클래스 상속
+
+   - 과거부터 JS는 proto 로 이 부분을 구현해왔음.
+
+     ```
+       class Rabbit extends Animal {
+         hide() {
+           alert(`${this.name} 이/가 숨었습니다!`);
+         }
+       }
+
+       let rabbit = new Rabbit("흰 토끼");
+
+       rabbit.run(5); // 흰 토끼 은/는 속도 5로 달립니다.
+       rabbit.hide(); // 흰 토끼 이/가 숨었습니다!
+     ```
+
+   - 키워드 `super`는 이럴 때 사용합니다.
+
+     - super.method(...)는 부모 클래스에 정의된 메서드, method를 호출합니다.
+     - super(...)는 부모 생성자를 호출하는데, 자식 생성자 내부에서만 사용 할 수 있습니다.
+
+     ```
+     class Animal {
+       constructor(name) {
+         this.speed = 0;
+         this.name = name;
+       }
+       run(speed) {
+         this.speed = speed;
+         alert(`${this.name}가 속도 ${this.speed}로 달립니다.`);
+       }
+       stop() {
+         this.speed = 0;
+         alert(`${this.name}가 멈췄습니다.`);
+       }
+     }
+     class Rabbit extends Animal {
+       hide() {
+         alert(`${this.name}가 숨었습니다!`);
+       }
+       stop() {
+         super.stop(); // 부모 클래스의 stop을 호출해 멈추고,
+         this.hide(); // 숨습니다.
+       }
+     }
+     let rabbit = new Rabbit("흰 토끼");
+
+     rabbit.run(5); // 흰 토끼가 속도 5로 달립니다.
+     rabbit.stop(); // 흰 토끼가 멈췄습니다. 흰 토끼가 숨었습니다!
+     ```
+
+     - 화살표 함수는 super를 지원하지 않습니다.
+       `this`가 다르니, 어찌보면 당연한듯
+       <br />
+
+   - 생성자 오버라이딩
+     - 명세서에 따르면, 클래스가 다른 클래스를 상속받고 `constructor`가 없는 경우엔 아래처럼 ‘비어있는’ `constructor`가 만들어집니다.
+       ```
+       class Rabbit extends Animal {
+         // 자체 생성자가 없는 클래스를 상속받으면 자동으로 만들어짐
+         constructor(...args) {
+           super(...args);
+         }
+         //////////////////////////////////////
+         ...
+       }
+       ```
+     - 생성자는 기본적으로 부모 constructor를 호출합니다.
+     - super(...)는 this를 사용하기 전에 반드시 호출해야 합니다.
+       ```
+        class Animal {
+          constructor(name) {
+            this.speed = 0;
+            this.name = name;
+          }
+          // ...
+        }
+        class Rabbit extends Animal {
+          constructor(name, earLength) {
+            super(name);
+            this.earLength = earLength;
+          }
+          // ...
+        }
+        // 이제 에러 없이 동작합니다.
+        let rabbit = new Rabbit("흰 토끼", 10);
+        alert(rabbit.name); // 흰 토끼
+        alert(rabbit.earLength); // 10
+       ```
+
+3. 정적 메서드와 정적 프로퍼티
+
+- `prototype`이 아닌 클래스 함수 자체에 메서드를 설정할 수도 있습니다. 이런 메서드를 정적(static) 메서드라고 부릅니다.
+
+- 정적 메서드는 아래와 같이 클래스 안에서 static 키워드를 붙여 만들 수 있습니다.
+
+  ```
+  // 아래 2개는 동일
+  class User {
+    static staticMethod() {
+      alert(this === User);
+    }
+  }
+
+  User.staticMethod(); // true
+  //////////////////////////////////////////////
+  class User { }
+
+  User.staticMethod = function() {
+    alert(this === User);
+  };
+
+  User.staticMethod(); // true
+  ```
+
+- 정적 메서드는 어떤 특정한 객체가 아닌 클래스에 속한 함수를 구현하고자 할 때, 특정 클래스 인스턴스가 아닌 클래스 '전체’에 필요한 기능을 만들 때 사용할 수 있습니다.
+- 정적 메서드는 클래스 선언부 안에 위치하고 앞에 static이라는 키워드가 붙습니다.
+- 정적 프로퍼티도 물론 만들 수 있습니다. 정적 프로퍼티는 일반 클래스 프로퍼티와 유사하게 생겼는데 앞에 static이 붙는다는 점만 다릅니다.
+- 정적 프로퍼티와 메서드는 상속됩니다.
+
+4. private, protected 프로퍼티와 메서드
+
+- 내부 인터페이스와 외부 인터페이스
+  객체 지향 프로그래밍에서 프로퍼티와 메서드는 두 그룹으로 분류됩니다.
+
+  - 내부 인터페이스(internal interface) – 동일한 클래스 내의 다른 메서드에선 접근할 수 있지만, 클래스 밖에선 접근할 수 없는 프로퍼티와 메서드
+  - 외부 인터페이스(external interface) – 클래스 밖에서도 접근 가능한 프로퍼티와 메서드
+
+- 자바스크립트에는 아래와 같은 두 가지 타입의 객체 필드(프로퍼티와 메서드)가 있습니다.
+
+  - public: 어디서든지 접근할 수 있으며 외부 인터페이스를 구성합니다. 지금까지 다룬 프로퍼티와 메서드는 모두 public입니다.
+  - private: 클래스 내부에서만 접근할 수 있으며 내부 인터페이스를 구성할 때 쓰입니다.
+
+- 프로퍼티 보호하기
+
+  - 예시 코드
+    ```
+    class CoffeeMachine {
+      _waterAmount = 0;
+      set waterAmount(value) {
+        if (value < 0) throw new Error("물의 양은 음수가 될 수 없습니다.");
+        this._waterAmount = value;
+      }
+      get waterAmount() {
+        return this._waterAmount;
+      }
+      constructor(power) {
+        this._power = power;
+      }
+    }
+    // 커피 머신 생성
+    let coffeeMachine = new CoffeeMachine(100);
+    // 물 추가
+    coffeeMachine.waterAmount = -10; // Error: 물의 양은 음수가 될 수 없습니다.
+    ```
+  - **protected 프로퍼티 명 앞엔 밑줄 \_이 붙습니다.**
+  - 자바스크립트에서 강제한 사항은 아니지만, 밑줄은 프로그래머들 사이에서 외부 접근이 불가능한 프로퍼티나 메서드를 나타낼 때 씁니다.
+  - waterAmount에 밑줄을 붙여 protected 프로퍼티로 만들어줍시다.
+
+- 읽기 전용 프로퍼티
+  - 읽기 전용 프로퍼티를 만들려면 setter(설정자)는 만들지 않고 getter(획득자)만 만들어야 합니다.
+    ```
+    class CoffeeMachine {
+      // ...
+      constructor(power) {
+        this._power = power;
+      }
+      get power() {
+        return this._power;
+      }
+    }
+    // 커피 머신 생성
+    let coffeeMachine = new CoffeeMachine(100);
+    alert(`전력량이 ${coffeeMachine.power}인 커피머신을 만듭니다.`); // 전력량이 100인 커피머신을 만듭니다.
+    coffeeMachine.power = 25; // Error (setter 없음)
+    ```
+- protected 필드는 상속됩니다.
+- private 프로퍼티(최신문법)
+
+  - private 프로퍼티와 메서드는 제안(proposal) 목록에 등재된 문법으로, 명세서에 등재되기 직전 상태입니다.
+
+  - private 프로퍼티와 메서드는 #으로 시작합니다. #이 붙으면 클래스 안에서만 접근할 수 있습니다.
+
+  - 물 용량 한도를 나타내는 private 프로퍼티 #waterLimit과 남아있는 물의 양을 확인해주는 private 메서드 #checkWater를 구현해봅시다.
+    ```
+    class CoffeeMachine {
+      #waterLimit = 200;
+      #checkWater(value) {
+        if (value < 0) throw new Error("물의 양은 음수가 될 수 없습니다.");
+        if (value > this.#waterLimit) throw new Error("물이 용량을 초과합니다.");
+      }
+    }
+    let coffeeMachine = new CoffeeMachine();
+    // 클래스 외부에서 private에 접근할 수 없음
+    coffeeMachine.#checkWater(); // Error
+    coffeeMachine.#waterLimit = 1000; // Error
+    ```
+  - `#`은 자바스크립트에서 지원하는 문법으로, private 필드를 의미합니다. private 필드는 클래스 외부나 자손 클래스에서 접근할 수 없습니다.
+  - private 필드는 public 필드와 상충하지 않습니다. private 프로퍼티 #waterAmount와 public 프로퍼티 waterAmount를 동시에 가질 수 있습니다.
+
+- **캡슐화 하는 이유**
+
+  - 사용자가 자신의 발등을 찍지 않도록 보호
+    커피 머신를 함께 사용하는 개발팀이 있다고 상상해봅시다. "Best CoffeeMachine"이라는 회사에서 만든 이 커피 머신은 현재 잘 작동하고 있지만, 보호 커버가 없어서 내부 인터페이스가 노출되어있는 상황입니다.
+  - 교양있는 팀원들은 모두 설계 의도에 맞게 커피 머신을 사용합니다. 그런데 어느 날 John이라는 개발자가 자신의 능력을 과신하며 커피 머신 내부를 살짝 만지게 됩니다. 이틀 후, 커피 머신은 고장이 나버렸죠.
+  - 커피 머신이 고장 난 건 John의 잘못이라기보다는, 보호 커버를 없애고 John이 마음대로 조작하도록 내버려 둔 사람의 잘못입니다.
+  - 프로그래밍에서도 마찬가지입니다. 외부에서 의도치 않게 클래스를 조작하게 되면 그 결과는 예측할 수 없게 됩니다.
+
+- **지원 가능**
+
+  - 실제 개발 과정에서 일어나는 상황은 커피 머신 사례보다 훨씬 복잡합니다. 커피 머신은 한번 구매하면 끝이지만 실제 코드는 유지보수가 끊임없이 일어나기 때문입니다.
+  - 내부 인터페이스를 엄격하게 구분하면, 클래스 개발자들은 사용자에게 알리지 않고도 자유롭게 내부 프로퍼티와 메서드들을 수정할 수 있습니다.
+  - 내부 인터페이스가 엄격히 구분된 클래스를 만지고 있다면, 그 어떤 외부 코드도 내부 private 메서드에 의존하고 있지 않기 때문에 private 메서드의 이름을 안전하게 바꿀 수 있고, 매개변수를 변경하거나 없앨 수도 있다는 것을 알아 두면 됩니다.
+
+- **복잡성 은닉**
+
+  - 사람들은 간단한 것을 좋아합니다. 내부는 간단치 않더라도 최소한 외형은 간단해야 하죠.
+
+- **protected 필드는 \*로 시작합니다**. \*은 자바스크립트에서 지원하는 문법은 아니지만, protected 필드를 나타낼 때 관습처럼 사용됩니다. 개발자는 protected 프로퍼티가 정의된 클래스와 해당 클래스를 상속받는 클래스에서만 \_가 붙은 필드에 접근해야 합니다.
+- **private 필드는 #로 시작하며**, 자바스크립트에서 지원하는 문법입니다. #로 시작하는 필드는 해당 필드가 정의된 클래스 내부에서만 접근 가능합니다.
+
+5. 내장 클래스 확장하기
+
+- 배열, 맵 같은 내장 클래스도 확장 가능합니다.
+
+  ```
+  // 메서드 하나를 추가합니다(더 많이 추가하는 것도 가능).
+  class PowerArray extends Array {
+    isEmpty() {
+      return this.length === 0;
+    }
+  }
+
+  let arr = new PowerArray(1, 2, 5, 10, 50);
+  alert(arr.isEmpty()); // false
+
+  let filteredArr = arr.filter(item => item >= 10);
+  alert(filteredArr); // 10, 50
+  alert(filteredArr.isEmpty()); // false
+  ```
+
+6. 'instanceof'로 클래스 확인하기
+
+- instanceof 연산자를 사용하면 객체가 특정 클래스에 속하는지 아닌지를 확인할 수 있습니다. instanceof는 상속 관계도 확인해줍니다.
+
+  ```
+  class Rabbit {}
+  let rabbit = new Rabbit();
+  // rabbit이 클래스 Rabbit의 객체인가요?
+  alert( rabbit instanceof Rabbit ); // true
+  ```
+
+  - `instanceof`는 생성자 함수에서도 사용할 수 있습니다.
+  - `Array` 같은 내장 클래스에도 사용할 수 있습니다.
+
+    ```
+    // 클래스가 아닌 생성자 함수
+    function Rabbit() {}
+
+    alert( new Rabbit() instanceof Rabbit ); // true
+    let arr = [1, 2, 3];
+    alert( arr instanceof Array ); // true
+    alert( arr instanceof Object ); // true
+    ```
+
+7. 믹스인
+
+- 자바스크립트는 단일상속만을 허용하는 언어입니다. 객체엔 단 하나의 `[[Prototype]]`만 있을 수 있고, 클래스는 클래스 하나만 상속받을 수 있습니다.
+- 믹스인(mixin)을 다른 클래스를 상속받을 필요 없이 이들 클래스에 구현되어있는 메서드를 담고 있는 클래스라고 정의합니다.
+
+- 자바스크립트에서 믹스인을 구현할 수 있는 가장 쉬운 방법은 유용한 메서드 여러 개가 담긴 객체를 하나 만드는 것입니다. 이렇게 하면 다수의 메서드를 원하는 클래스의 프로토타입에 쉽게 병합할 수 있습니다.
+  ```
+  // 믹스인
+  let sayHiMixin = {
+    sayHi() {
+      alert(`Hello ${this.name}`);
+    },
+    sayBye() {
+      alert(`Bye ${this.name}`);
+    }
+  };
+  // 사용법:
+  class User {
+    constructor(name) {
+      this.name = name;
+    }
+  }
+  // 메서드 복사
+  Object.assign(User.prototype, sayHiMixin);
+  // 이제 User가 인사를 할 수 있습니다.
+  new User("Dude").sayHi(); // Hello Dude!
+  ```
+- 믹스인 은 객체 지향 언어에서 범용적으로 쓰이는 용어로, 다른 클래스들의 메서드 조합을 포함하는 클래스를 의미합니다.
+
+- 몇몇 언어는 다중상속을 허용합니다. 자바스크립트는 다중상속을 지원하지 않는데, 믹스인을 사용하면 메서드를 복사해 프로토타입에 구현할 수 있습니다.
 
 ---
 
-### 8. 비동기 함수
+### 8. `Promise`와 `async, await`
+
+1. 콜백
+2. `Promise`
+3. `Promise` 체이닝
+4. `Promise`와 에러 핸들링
+5. `Promise` API
+6. `Promise`화
+7. 마이크로태스크
+8. async와 await
 
 ---
 
