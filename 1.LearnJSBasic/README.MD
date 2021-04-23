@@ -17,7 +17,7 @@ https://ko.javascript.info/ 사이트를 메인으로 학습.
    5. Object Basic
    6. ProtoType
    7. Class
-   8. `Promise`와 async, await
+   8. promise와 async, await
       <br />
 
 2. JavaScripts 동작원리
@@ -1614,16 +1614,121 @@ JS는 class가 없었지만, ES6때 추가 되었음.
 
 ---
 
-### 8. `Promise`와 `async, await`
+### 8. Promise와 async, await
 
 1. 콜백
+
+`setTimeout`은 스케줄링에 사용되는 가장 대표적인 함수입니다.
+
+무언가를 비동기적으로 수행하는 함수는 함수 내 동작이 모두 처리된 후 실행되어야 하는 함수가 들어갈 콜백을 인수로 반드시 제공해야 합니다.
+
+- 콜백 지옥
+
+  ```
+  loadScript('1.js', function(error, script) {
+      if (error) {
+        handleError(error);
+      } else {
+        // ...
+        loadScript('2.js', function(error, script) {
+          if (error) {
+            handleError(error);
+          } else {
+            // ...
+            loadScript('3.js', function(error, script) {
+              if (error) {
+                handleError(error);
+              } else {
+                // 모든 스크립트가 로딩된 후, 실행 흐름이 이어집니다. (*)
+              }
+            });
+          }
+        })
+      }
+    });
+  ```
+
+  - 위 코드는 다음과 같이 동작합니다.
+
+    - 1.js를 로드합니다. 그 후 에러가 없으면,
+    - 2.js를 로드합니다. 그 후 에러가 없으면,
+    - 3.js를 로드합니다. 그 후 에러가 없으면 (\*)로 표시한 줄에서 또 다른 작업을 수행합니다.
+
+  - 호출이 계속 중첩되면서 코드가 깊어지고 있네요. 본문 중간중간 ...로 표시한 곳에 반복문과 조건문이 있는 코드가 들어가면 관리는 특히나 더 힘들어질 겁니다.
+
+  - 이렇게 깊은 중첩 코드가 만들어내는 패턴은 소위 ‘콜백 지옥(callback hell)’ 혹은 '멸망의 피라미드(pyramid of doom)'라고 불립니다.
+
+- 콜백으로 더 나은 코드
+  ```
+    loadScript('1.js', step1);
+    function step1(error, script) {
+      if (error) {
+        handleError(error);
+      } else {
+        // ...
+        loadScript('2.js', step2);
+      }
+    }
+    function step2(error, script) {
+      if (error) {
+        handleError(error);
+      } else {
+        // ...
+        loadScript('3.js', step3);
+      }
+    }
+    function step3(error, script) {
+      if (error) {
+        handleError(error);
+      } else {
+        // 모든 스크립트가 로딩되면 다른 동작을 수행합니다. (*)
+      }
+    };
+  ```
+  - 이렇게 짜면 재사용 할 수가 없음.
+
 2. `Promise`
-3. `Promise` 체이닝
-4. `Promise`와 에러 핸들링
-5. `Promise` API
-6. `Promise`화
-7. 마이크로태스크
-8. async와 await
+
+- `promise` 객체는 아래와 같은 문법으로 만들 수 있습니다
+
+  ```
+  let promise = new Promise(function(resolve, reject) {
+    // executor (제작 코드, '가수')
+  });
+  ```
+
+  - executor에선 결과를 즉시 얻든, 늦게 얻든 상관없이 상황에 따라 인수로 넘겨준 콜백 중 하나를 반드시 호출해야 합니다.
+
+    - resolve(value) — 일이 성공적으로 끝난 경우, 그 결과를 나타내는 value와 함께 호출
+    - reject(error) — 에러 발생 시 에러 객체를 나타내는 error와 함께 호출
+      <br />
+
+  - new Promise 생성자가 반환하는 promise 객체는 다음과 같은 내부 프로퍼티를 갖습니다.
+
+    - state — 처음엔 "pending"(보류)이었다 resolve가 호출되면 fulfilled", reject가 호출되면 "rejected"로 변합니다.
+    - result — 처음엔 undefined이었다, resolve(value)가 호출되면 value로, reject(error)가 호출되면 error로 변합니다.
+
+    <br />
+
+- 소비자: then, catch, finally
+  - `.then`은 프라미스에서 가장 중요하고 기본이 되는 메서드입니다.
+    - 첫 번째 인수는 프라미스가 이행되었을 때 실행되는 함수이고, 여기서 실행 결과를 받습니다.
+    - 두 번째 인수는 프라미스가 거부되었을 때 실행되는 함수이고, 여기서 에러를 받습니다.
+    - 작업이 성공적으로 처리된 경우만 다루고 싶다면 .then에 인수를 하나만 전달하면 됩니다.
+  - `.catch`
+    - 에러가 발생한 경우만 다루고 싶다면 .then(null, errorHandlingFunction)같이 null을 첫 번째 인수로 전달하면 됩니다. .catch(errorHandlingFunction)를 써도 되는데, .catch는 .then에 null을 전달하는 것과 동일하게 작동합니다.
+    - .catch(f)는 문법이 간결하다는 점만 빼고 .then(null,f)과 완벽하게 같습니다.
+  - `.finally`
+    - try {...} catch {...}에 finally 절이 있는 것처럼, 프라미스에도 finally가 있습니다.
+
+프라미스가 처리되면(이행이나 거부) f가 항상 실행된다는 점에서 .finally(f) 호출은 .then(f, f)과 유사합니다.
+
+1. `Promise` 체이닝
+2. `Promise`와 에러 핸들링
+3. `Promise` API
+4. `Promise`화
+5. 마이크로태스크
+6. async와 await
 
 ---
 
