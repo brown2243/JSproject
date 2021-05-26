@@ -1687,12 +1687,12 @@ JS는 class가 없었지만, ES6때 추가 되었음.
   ```
   - 이렇게 짜면 재사용 할 수가 없음.
 
-2. `Promise`
+2. `promise`
 
 - `promise` 객체는 아래와 같은 문법으로 만들 수 있습니다
 
   ```
-  let promise = new Promise(function(resolve, reject) {
+  let promise = new promise(function(resolve, reject) {
     // executor (제작 코드, '가수')
   });
   ```
@@ -1703,7 +1703,7 @@ JS는 class가 없었지만, ES6때 추가 되었음.
     - reject(error) — 에러 발생 시 에러 객체를 나타내는 error와 함께 호출
       <br />
 
-  - new Promise 생성자가 반환하는 promise 객체는 다음과 같은 내부 프로퍼티를 갖습니다.
+  - new promise 생성자가 반환하는 promise 객체는 다음과 같은 내부 프로퍼티를 갖습니다.
 
     - state — 처음엔 "pending"(보류)이었다 resolve가 호출되면 fulfilled", reject가 호출되면 "rejected"로 변합니다.
     - result — 처음엔 undefined이었다, resolve(value)가 호출되면 value로, reject(error)가 호출되면 error로 변합니다.
@@ -1720,15 +1720,137 @@ JS는 class가 없었지만, ES6때 추가 되었음.
     - .catch(f)는 문법이 간결하다는 점만 빼고 .then(null,f)과 완벽하게 같습니다.
   - `.finally`
     - try {...} catch {...}에 finally 절이 있는 것처럼, 프라미스에도 finally가 있습니다.
+    - 프라미스가 처리되면(이행이나 거부) f가 항상 실행된다는 점에서 .finally(f) 호출은 .then(f, f)과 유사합니다.
 
-프라미스가 처리되면(이행이나 거부) f가 항상 실행된다는 점에서 .finally(f) 호출은 .then(f, f)과 유사합니다.
+3. `promise` 체이닝
 
-1. `Promise` 체이닝
-2. `Promise`와 에러 핸들링
-3. `Promise` API
-4. `Promise`화
-5. 마이크로태스크
-6. async와 await
+- 프라미스 체이닝은 result가 .then 핸들러의 체인(사슬)을 통해 전달된다는 점에서 착안한 아이디어입니다.
+
+  - 1초 후 최초 프라미스가 이행됩니다, – (\*)
+  - 이후 .then 핸들러가 호출됩니다. –(\*\*)
+  - 2에서 반환한 값은 다음 .then 핸들러에 전달됩니다. – (\*\*\*)
+  - 이런 과정이 계속 이어집니다.
+
+4. `promise`와 에러 핸들링
+
+- 프라미스 체인은 에러를 잘 처리합니다. 프라미스가 거부되면 제어 흐름이 제일 가까운 rejection 핸들러로 넘어갑니다. 이는 실무에서 아주 유용하게 사용됩니다.
+- `.then` 핸들러를 원하는 만큼 사용하다 마지막에 `.catch` 하나만 붙이면, `.then` 핸들러에서 발생한 모든 에러를 처리할 수 있습니다.
+- 에러 발생 시, 회복할 방법이 없다면 .catch를 사용하지 않아도 괜찮습니다.
+
+5. `promise` API
+   Promise 클래스에는 5가지 정적 메서드가 있습니다.
+
+- Promise.all
+
+  - Promise.all은 여러 개의 프라미스를 동시에 실행시키고 모든 프라미스가 준비될 때까지 기다린 후 실행 됩니다.
+  - 프라미스가 하나라도 거부되면 Promise.all은 즉시 거부되고 배열에 저장된 다른 프라미스의 결과는 완전히 잊힙니다. 이행된 프라미스의 결과도 무시되죠.
+    `let promise = Promise.all([...promises...]);`
+
+    ```
+    let urls = [
+      'https://api.github.com/users/iliakan',
+      'https://api.github.com/users/remy',
+      'https://api.github.com/users/jeresig'
+    ];
+
+    // fetch를 사용해 url을 프라미스로 매핑합니다.
+    let requests = urls.map(url => fetch(url));
+
+    // Promise.all은 모든 작업이 이행될 때까지 기다립니다.
+    Promise.all(requests)
+      .then(responses => responses.forEach(
+        response => alert(`${response.url}: ${response.status}`)
+      ));
+      /////////////////////////////////////////////////
+      // ex2
+      let names = ['iliakan', 'remy', 'jeresig'];
+
+      let requests = names.map(name => fetch(`https://api.github.com/users/${name}`));
+
+      Promise.all(requests)
+        .then(responses => {
+          // 모든 응답이 성공적으로 이행되었습니다.
+          for(let response of responses) {
+            alert(`${response.url}: ${response.status}`); // 모든 url의 응답코드가 200입니다.
+          }
+
+          return responses;
+        })
+        // 응답 메시지가 담긴 배열을 response.json()로 매핑해, 내용을 읽습니다.
+        .then(responses => Promise.all(responses.map(r => r.json())))
+        // JSON 형태의 응답 메시지는 파싱 되어 배열 'users'에 저장됩니다.
+        .then(users => users.forEach(user => alert(user.name)));
+    ```
+
+- Promise.allSettled
+
+  - `Promise.all`은 프라미스가 하나라도 거절되면 전체를 거절합니다.
+  - 반면, Promise.allSettled는 모든 프라미스가 처리될 때까지 기다립니다. 반환되는 배열은 다음과 같은 요소를 갖습니다.
+
+    - 응답이 성공할 경우 – {status:"fulfilled", value:result}
+    - 에러가 발생한 경우 – {status:"rejected", reason:error}
+
+    ```
+    let urls = [
+      'https://api.github.com/users/iliakan',
+      'https://api.github.com/users/remy',
+      'https://no-such-url'
+    ];
+
+    Promise.allSettled(urls.map(url => fetch(url)))
+      .then(results => { // (*)
+        results.forEach((result, num) => {
+          if (result.status == "fulfilled") {
+            alert(`${urls[num]}: ${result.value.status}`);
+          }
+          if (result.status == "rejected") {
+            alert(`${urls[num]}: ${result.reason}`);
+          }
+        });
+      });
+
+    [
+      {status: 'fulfilled', value: ...응답...},
+      {status: 'fulfilled', value: ...응답...},
+      {status: 'rejected', reason: ...에러 객체...}
+    ]
+    ```
+
+  - Promise.race
+    - `Promise.race`는 `Promise.all`과 비슷합니다. 다만 가장 먼저 처리되는 프라미스의 결과(혹은 에러)를 반환합니다.
+    - 왜 있는 걸까..?
+  - Promise.reject
+    - Promise.reject(error)는 결괏값이 error인 거부 상태 프라미스를 생성합니다.
+
+6. `promise`화
+   콜백을 받는 함수를 프라미스를 반환하는 함수로 바꾸는 것을 '프라미스화(promisification)'라고 합니다.
+
+// 그냥 async / await 를 쓰면 됨
+
+7. 마이크로태스크
+
+- 비동기 작업을 처리하려면 적절한 관리가 필요합니다. 이를 위해 ECMA에선 PromiseJobs라는 내부 큐(internal queue)를 명시합니다. V8 엔진에선 이를 '마이크로태스크 큐(microtask queue)'라고 부르기 때문에 이 용어가 좀 더 선호됩니다.
+  <br />
+- 명세서의 설명을 살펴봅시다.
+
+  - 마이크로태스크 큐는 먼저 들어온 작업을 먼저 실행합니다(FIFO, first-in-first-out).
+  - 실행할 것이 아무것도 남아있지 않을 때만 마이크로태스크 큐에 있는 작업이 실행되기 시작합니다.
+
+- 브라우저와 Node.js를 포함한 대부분의 자바스크립트 엔진에선, 마이크로태스크가 '이벤트 루프(event loop)'와 '매크로태스크(macrotask)'와 깊은 연관 관계를 맺습니다. 이 둘은 프라미스와는 직접적인 연관성이 없기 때문에, 이벤트 루프와 매크로·마이크로태스크에서 따로 다루도록 하겠습니다.
+
+8. async와 await(ES2017)
+
+- 최상단에서도 사용 될 수 있게, 업데이트 된걸로 앎
+- function 앞에 async 키워드를 추가하면 두 가지 효과가 있습니다.
+- 함수는 언제나 프라미스를 반환합니다.
+- 함수 안에서 await를 사용할 수 있습니다.
+- 프라미스 앞에 await 키워드를 붙이면 자바스크립트는 프라미스가 처리될 때까지 대기합니다. 처리가 완료되면 조건에 따라 아래와 같은 동작이 이어집니다.
+
+- 에러 발생 – 예외가 생성됨(에러가 발생한 장소에서 throw error를 호출한 것과 동일함)
+- 에러 미발생 – 프라미스 객체의 result 값을 반환
+  async/await를 함께 사용하면 읽고, 쓰기 쉬운 비동기 코드를 작성할 수 있습니다.
+
+- sync/await를 사용하면 promise.then/catch가 거의 필요 없습니다. 하지만 가끔 가장 바깥 스코프에서 비동기 처리가 필요할 때같이 promise.then/catch를 써야만 하는 경우가 생기기 때문에 async/await가 프라미스를 기반으로 한다는 사실을 알고 계셔야 합니다. 여러 작업이 있고, 이 작업들이 모두 완료될 때까지 기다리려면 Promise.all을 활용할 수 있다는 점도 알고 계시기 바랍니다.
 
 ---
 
