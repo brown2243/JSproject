@@ -469,22 +469,57 @@ function solution(s) {
 }
 ```
 
-####
+<!-- 21/05/26 새로운 문제들 -->
+
+#### 로또의 최고 순위와 최저 순위
+
+테스트케이스 14번에서 살짝 시간을 썼다.
+
+```
+function solution(lottos, win_nums) {
+    const zero = lottos.filter(v => v === 0).length
+    const ans = lottos.filter(v => win_nums.includes(v)).length
+    return [ans === 0 && zero === 0 ? 6 : 7 - ans - zero,
+            zero === 6 || (ans === 0 && zero === 0) ? 6 : 7 - ans]
+}
 
 ```
 
-```
+#### 음양 더하기
 
-####
-
-```
+lv 1 수준
 
 ```
-
-####
-
+function solution(absolutes, signs) {
+    const ans = absolutes.reduce((acc,cur,idx) => {
+        return acc + (signs[idx] ? cur : (cur * -1))
+    },0)
+    return ans
+}
 ```
 
-```
+#### 약수의 개수와 덧셈
 
-## 카카오
+조금 어이가 없는 문제
+어떤 수든 1과 자기 자신 값은 무조건 약수기에, 기본으로 cnt에 2를 주고
+for(let i = 2; i < x; i++)로 하니 1번 케이스에서 통과를 못함
+아무리봐도 어려운 문제 같지 않아서 for(let i = 1; i <= x; i++)로 하니 통과 됌
+이 것은 자기 자신 값이 약수일수도 아닐수도 있다는 건데 ???? 뭔 차인지 모르겠다.
+
+```
+function solution(left, right) {
+    let ans = 0
+    for(let i = left; i <= right; i++){
+        if(divisor(i) % 2 === 0) ans += i
+        else ans -= i
+    }
+    return ans
+}
+const divisor = (x) => {
+    let cnt = 0
+    for(let i = 1; i <= x; i++){
+        if(x % i === 0) cnt++
+    }
+    return cnt
+}
+```
