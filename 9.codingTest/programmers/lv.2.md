@@ -387,44 +387,474 @@ function solution(s) {
 }
 ```
 
-####
+#### 점프와 순간 이동
+
+예전에 처음 풀 때 DP 적용하고 온갖 짓 다했던 문제.
+뒤에서 푸는 굉장히 간단한 방법이 있었던...
+
+```
+function solution(n)
+{
+    let cnt = 0
+    while(n !== 0){
+        if(n % 2 === 0) n = n / 2
+        else {
+            n = n -1
+            cnt++
+        }
+    }
+    return cnt
+}
+```
+
+#### 영어 끝말잇기
+
+```
+function solution(n, words) {
+    const saidword = [words[0]]
+
+    for(let i = 1; i < words.length; i++){
+        let lastWord = saidword[saidword.length-1]
+        let curWord = words[i]
+        console.log(lastWord)
+        if(saidword.includes(curWord) || curWord[0] !== lastWord[lastWord.length-1]){
+            return [(i % n) + 1 , Math.floor(i/n) + 1]
+        }
+        saidword.push(curWord)
+    }
+    return [0,0]
+}
+```
+
+#### 구명보트
+
+```
+function solution(people, limit) {
+    const wait = people.sort((a, b) => b - a)
+    let cnt = 0
+    for(let big = 0, small = wait.length-1; big <= small; big++){
+        cnt++
+        if(wait[big] + wait[small] <= limit) {
+            small--
+        }
+    }
+    return cnt
+}
+```
+
+#### 삼각 달팽이
+
+엄청 어려운 문제. 풀이 봤었고, 지금도 솔직히 그냥 보면 못풀듯
+
+```
+function solution(n) {
+    const ans = Array.from({length:n}, ((_, idx) => new Array(idx+1).fill(0)))
+    let startRow = 0, endRow = n-1, startCol = 0, endCol = n-1, cnt = 1, Counter = 1
+    while(startRow <= endRow && startCol <= endCol){
+        // 세로
+        for(let i = startRow; i <= endRow; i++){
+            ans[i][startCol] = Counter++
+        }
+        startRow++
+        startCol++
+        // 가로
+        for(let i = startCol; i <= endCol; i++){
+            ans[endRow][i] = Counter++
+        }
+        endRow--
+        endCol--
+        // 대각선
+        for(let i = endRow; i >= startRow; i--){
+            ans[i][ans[i].length - cnt] = Counter++
+        }
+        endCol--
+        startRow++
+        cnt++
+    }
+    return ans.flat()
+}
+// 1
+// 2 12
+// 3 13 11
+// 4 14 15 10
+// 5  6  7  8  9
+```
+
+#### 큰 수 만들기
+
+```
+function solution(number, k) {
+    const arr = number.split(""), ans = []
+    for(let i = 0; i < arr.length; i++){
+        while(arr[i] > ans[ans.length-1] && k > 0){
+            ans.pop()
+            k--
+        }
+        ans.push(arr[i])
+    }
+    ans.splice(ans.length-k, k)
+    return ans.join("")
+}
+```
+
+#### H-Index
+
+```
+function solution(arr) {
+     arr = arr.sort((a, b) => b - a);
+     let i = 0;
+     while(i + 1 <= arr[i]){
+         i++;
+     }
+     return i;
+}
+```
+
+#### 다리를 지나는 트럭
+
+```
+function solution(bridge_length, limit, trucks) {
+    const bridge = new Array(bridge_length).fill(0)
+    let time = 0, weightSum = 0
+
+    while(trucks.length > 0){
+        const truck = trucks.shift()
+            weightSum -= bridge.shift()
+        bridge.push(truck)
+        weightSum += truck
+        time += 1
+        while(weightSum > limit){
+            if(bridge[0] !== 0){
+                weightSum -= bridge[0]
+            }
+            bridge.shift()
+            bridge.push(0)
+            time += 1
+        }
+    }
+    return time + bridge_length
+}
+```
+
+#### 배달
+
+```
+function solution(N, road, K) {
+  let adj = Array.from(Array(N + 1), () => new Array(N + 1).fill(Infinity));
+  let answer = 0;
+
+  for (let i = 1; i <= N; i++) {
+    adj[i][i] = 0;
+  }
+
+  road.forEach((r) => {
+    const [s, e, dist] = r;
+    // 중복 제거
+    if (adj[s][e] !== Infinity) {
+      adj[s][e] = adj[e][s] = Math.min(adj[s][e], dist);
+    } else {
+      adj[s][e] = adj[e][s] = dist;
+    }
+  });
+
+  // 와샬 알고리즘
+  for (let k = 1; k <= N; k++) {
+    for (let i = 1; i <= N; i++) {
+      for (let j = 1; j <= N; j++) {
+        if (adj[i][k] + adj[k][j] < adj[i][j]) {
+          adj[i][j] = adj[i][k] + adj[k][j];
+        }
+      }
+    }
+  }
+  for (let i = 1; i <= N; i++) {
+    if (adj[1][i] <= K) answer++;
+  }
+
+  return answer;
+}
+```
+
+#### 카펫
+
+```
+function solution(brown, yellow) {
+    const N = brown + yellow
+    let tmp = N ** 0.5
+    if(Number.isInteger(tmp)){
+        return [tmp,tmp]
+    } else {
+        let a = Math.ceil(tmp)
+        while(true){
+            if(N % a === 0 && brown === (a * 2 + ((N / a) - 2) * 2)){
+                return [a, N/a]
+            } else {
+                a++
+            }
+        }
+    }
+}
+```
+
+#### 위장
+
+```
+function solution(clothes) {
+    const obj = {}
+    for(let [name, sort] of clothes){
+        obj[sort] = obj[sort] ? obj[sort] + 1 : 1;
+    }
+    console.log(Object.entries(obj))
+    return Object.values(obj).reduce((acc,cur) => acc * (cur + 1), 1) - 1
+}
+```
+
+#### 올바른 괄호
+
+```
+function solution(s){
+    s.split("")
+    const box = []
+    for(let i = 0; i < s.length; i++){
+        if(s[i] === '(') box.push(s[i])
+        else {
+            if(box.length === 0) return false
+            else box.pop()
+        }
+    }
+    return box.length === 0 ? true : false
+}
+```
+
+#### 다음 큰 숫자
+
+```
+function solution(n) {
+    const N = n.toString(2).split("").filter(v => v === '1').length
+    let i = n + 1
+    while(true){
+        if(N === i.toString(2).split("").filter(v => v === '1').length) return i
+        i++
+    }
+}
+```
+
+#### 땅따먹기
+
+```
+function solution(land) {
+    for(let i = 1; i < land.length; i++){
+        for(let j = 0; j < 4; j++){
+            let tmp = land[i-1].filter((val, idx) => idx !== j ? val : 0)
+            land[i][j] += Math.max(...tmp)
+        }
+    }
+    return Math.max(...land[land.length-1])
+}
+```
+
+#### 숫자의 표현
+
+```
+function solution(n) {
+    let cnt = 1
+    for(let i = 0; i < n; i++){
+        let total = 0
+        for(let j = i + 1; j < n; j++){
+            total += j
+            if(total === n){
+                cnt++
+                break
+            }
+            if(total > n){
+                break
+            }
+        }
+    }
+    return cnt
+}
+```
+
+#### 최댓값과 최솟값
+
+```
+function solution(s) {
+    s = s.split(" ").map(v => Number(v))
+    return `${Math.min(...s)} ${Math.max(...s)}`
+}
+```
+
+#### 최솟값 만들기
+
+```
+function solution(A,B){
+    A.sort((a,b) => a-b)
+    B.sort((a,b) => b-a)
+    return A.reduce((acc,cur,idx) => acc + cur*B[idx], 0)
+}
+```
+
+#### 피보나치 수
+
+```
+function solution(n) {
+    const dp = [0,1,1]
+    for(let i = 3; i <= n; i++){
+        dp.push((dp[i-1] + dp[i-2]) % 1234567)
+    }
+    return dp[n]
+}
+```
+
+#### 행렬의 곱셈
+
+은근히 헷갈림
+
+```
+function solution(arr1, arr2) {
+    const ans = Array.from({length:arr1.length}, () => new Array(arr2[0].length).fill(0))
+    for(let N = 0; N < arr1.length; N++){
+        for(let K = 0; K < arr2[0].length; K++){
+            for(let M = 0; M < arr1[0].length; M++){
+                ans[N][K] += arr1[N][M] * arr2[M][K]
+            }
+        }
+    }
+    return ans
+}
+// N x M * M x K
+```
+
+#### JadenCase 문자열 만들기
+
+```
+function solution(s) {
+    return s.split(" ")
+            .map(v => v.substring(0,1).toUpperCase() + v.substring(1).toLowerCase())
+            .join(" ")
+}
+```
+
+#### N개의 최소공배수
+
+```
+function solution(num){
+    return num.reduce((acc,cur) => acc*cur / GCD(acc,cur))
+}
+const GCD = (a,b) => {
+    if(b === 0) return a
+    return GCD(b, a % b)
+}
+```
+
+5/28
+새로 나온 문제들
+
+#### 괄호 회전하기
+
+stack 문제. 한방에 풀어버린거 보니 아직 안죽었구만...!
+
+```
+function solution(s) {
+    const arr = s.split("")
+    let ans = 0
+    for(let i = 0, N = arr.length; i < N; i++){
+        if(check(arr)) ans++
+        arr.push(arr.shift())
+    }
+    return ans
+}
+const check = (array) => {
+    const stack = []
+    for(let i = 0, N = array.length; i < N; i++){
+        if(array[i] === "]"){
+            if(stack[stack.length-1] === "[") stack.pop()
+            else return false
+        }
+        else if(array[i] === ")"){
+            if(stack[stack.length-1] === "(") stack.pop()
+            else return false
+        }
+        else if(array[i] === "}"){
+            if(stack[stack.length-1] === "{") stack.pop()
+            else return false
+        }
+        else stack.push(array[i])
+    }
+    if(stack.length > 0) return false
+    return true
+}
+```
+
+#### 2개 이하로 다른 비트
+
+완전탐색문제인 줄 알았는데,아니었다.
+결국 풀이를 찾아봤음
+https://blog.naver.com/PostView.nhn?blogId=diddnjs02&logNo=222356738504&parentCategoryNo=&categoryNo=91&viewDate=&isShowPopularPosts=true&from=search
+어려운 문제.
+
+```
+function solution(numbers) {
+  const ans = [];
+
+  for (let number of numbers) {
+    if (number % 2 === 0) ans.push(number + 1);
+    else {
+      const bit = number.toString(2).split("")
+      if (bit.every((val) => val === "1")) {
+        bit[0] = "10"
+      } else {
+        for (let i = bit.length - 1; i >= 0; i--) {
+          if (bit[i] === "0") {
+            bit[i] = "1";
+            bit[i + 1] = "0";
+            break;
+          }
+        }
+      }
+      ans.push(parseInt(bit.join(""), 2));
+    }
+  }
+  return ans;
+}
 
 ```
 
-```
+#### 행렬 테두리 회전하기
 
-####
-
-```
-
-```
-
-####
+어려워서 못 품 https://www.cckn.dev/problem-solve/20210427-2/ 방식
+진짜 기발하네...!
 
 ```
+function solution(rows, columns, queries) {
+  const ans = []
+  const board = Array(rows)
+    .fill(0)
+    .map(() => Array(columns))
 
-```
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      board[i][j] = i * columns + j + 1
+    }
+  }
+  queries.forEach(query => {
+    const [x1, y1, x2, y2] = query.map(pos => pos - 1)
+    const queue = []
 
-####
+    for (let i = 0; i < y2 - y1; i++) queue.push(board[x1][y1 + i])
+    for (let i = 0; i < x2 - x1; i++) queue.push(board[x1 + i][y2])
+    for (let i = 0; i < y2 - y1; i++) queue.push(board[x2][y2 - i])
+    for (let i = 0; i < x2 - x1; i++) queue.push(board[x2 - i][y1])
 
-```
+    queue.unshift(queue.pop())
+    ans.push(Math.min(...queue))
 
-```
-
-####
-
-```
-
-```
-
-####
-
-```
-
-```
-
-####
-
-```
-
+    for (let i = 0; i < y2 - y1; i++) board[x1][y1 + i] = queue.shift()
+    for (let i = 0; i < x2 - x1; i++) board[x1 + i][y2] = queue.shift()
+    for (let i = 0; i < y2 - y1; i++) board[x2][y2 - i] = queue.shift()
+    for (let i = 0; i < x2 - x1; i++) board[x2 - i][y1] = queue.shift()
+    console.log(board)
+  })
+  return ans
+}
 ```
