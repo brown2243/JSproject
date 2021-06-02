@@ -1,0 +1,49 @@
+.App {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.head{
+  margin-top: 10vh;
+  text-align: center;
+}
+.model{
+  position: absolute;
+  height: 40vh;
+  width: 40vw;
+  border: 1px solid black;
+  background: beige;
+  transform: translateY(50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  z-index: 1;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 20vw;
+}
+.body {
+  text-align: center;
+  margin-top: 10vh;
+  height: 40vh;
+}
+table {
+  width: 60vw;
+}
+.X {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+.textRight {
+  text-align : right
+}
+td {
+  text-align: center;
+  width: 10vw;
+}
