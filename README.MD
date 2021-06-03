@@ -4,15 +4,15 @@
 
 클릭하면 세부내용을 볼 수 있습니다.
 
-### 1.js_grammar
+### 1. JS_grammar
 
-[JS 문법 공부 및 간단한 Clone 코딩](https://github.com/brown2243/JSstudy/tree/master/1.LearnJSBasic)
+- [JS 문법 공부 및 간단한 Clone 코딩](https://github.com/brown2243/JSstudy/tree/master/1.js_grammar)
 
 ---
 
-### 2.vanlia_js
+### 2. Vanlia_js
 
-[순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만들어보기](https://github.com/brown2243/JSstudy/tree/master/2.practice_work)
+- [순수 javaScripts로 DOM 조작 및 각종 기능들 직접 만들어보기](https://github.com/brown2243/JSstudy/tree/master/2.vanlia_js)
 
 ---
 
