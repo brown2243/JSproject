@@ -75,13 +75,41 @@ reducer가 데이터를 수정하고 return 하는 모든 값은 store에 저장
 
 ### 2.0 Vanilla ToDo (06:47)
 
+현재 app은 dataless. UI만 변경, 작성한 내용을 저장할 수가 없음.
+
+**Never mutate state**
+**Never mutate state**
+**Never mutate state**
+
 ### 2.1 State Mutation (05:37)
+
+three principles of redux
+
+1. Single source of truth
+   The global state of your application is stored in an object tree within a single store.
+2. State is read-only
+   The only way to change the state is to emit an action, an object describing what happened.
+3. Changes are made with pure functions
+   To specify how the state tree is transformed by actions, you write pure reducers. it means no mutate!
+
+**배열을 수정하지말고 새 배열을 return**
 
 ### 2.2 Delete To Do (08:14)
 
+dispatch에 넣는 객체도 함수로 만들게 함 -> app을 작은 단위의 함수로 쪼개는 중
+
 ### 2.3 Delete To Do part Two (05:12)
 
+**Never mutate state**
+**Never mutate state**
+**Never mutate state**
+
+use filter instead of splice
+
 ### 2.4 Conclusions (04:42)
+
+1. action만 return하는 action_creator함수
+2. no mutate
 
 ## 3 REACT REDUX
 
