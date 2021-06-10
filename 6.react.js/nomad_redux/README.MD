@@ -1,4 +1,4 @@
-# 노마드 코더 Redux 무료강의
+# 노마드 코더 Redux 기본강의
 
 ## 0 INTRODUCTION
 
@@ -115,9 +115,27 @@ use filter instead of splice
 
 ### 3.0 Setup (06:25)
 
+세팅
+
 ### 3.1 Connecting the Store (04:52)
 
+store.subscribe()
+redux-react : react에서 store의 변동사항에 대해 subscribe 할때
+
+```
+import { Provider } from "react-redux";
+   ...
+    <Provider store={store}>
+      <App />
+    </Provider>
+```
+
 ### 3.2 mapStateToProps (07:50)
+
+react-redux
+connect 는 컴포넌트들을 스토어에 연결시켜줌
+
+mapStateToProps 는 함수고, (state, ownProps)로 호출
 
 ### 3.3 mapDispatchToProps (06:09)
 
