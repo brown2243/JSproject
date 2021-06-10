@@ -136,8 +136,15 @@ react-redux
 connect 는 컴포넌트들을 스토어에 연결시켜줌
 
 mapStateToProps 는 함수고, (state, ownProps)로 호출
+`connect(mapStateToProps)(Home);`
+mapStateToProps 가 return 하는 것은 2번째 인자 컴포넌트의 props가 됌
 
 ### 3.3 mapDispatchToProps (06:09)
+
+`connect(mapStateToProps, mapDispatchToProps)(Home);`
+or
+`connect(null, mapDispatchToProps)(Home);`
+`function mapDispatchToProps(dispatch,){}`
 
 ### 3.4 Deleting To Do (07:14)
 
