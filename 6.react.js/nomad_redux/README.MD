@@ -156,6 +156,9 @@ or
 
 ### 4.0 Redux Toolkit (02:17)
 
+리덕스에서는 반복해서 작성해야하는 보일러플레이트가 많은데,
+코드 작성량을 줄이는데 도움을 줄 toolkit!
+
 ### 4.1 createAction (06:16)
 
 ### 4.2 createReducer (07:52)
